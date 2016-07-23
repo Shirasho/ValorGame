@@ -1,0 +1,4 @@
+CORE
+
+ValorGame.Core	Local
+ValorGame.Core	Remote
