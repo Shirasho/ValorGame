@@ -14,8 +14,11 @@ AValorAIController::AValorAIController(const FObjectInitializer& ObjectInitializ
 	BlackboardComponent = ObjectInitializer.CreateDefaultSubobject<UBlackboardComponent>(this, TEXT("BlackBoardComponent"));
 
 	BrainComponent = BehaviorComponent = ObjectInitializer.CreateDefaultSubobject<UBehaviorTreeComponent>(this, TEXT("BehaviorComponent"));
+}
 
-	//bWantsPlayerState = true;
+void AValorAIController::PostInitializeComponents()
+{
+	Super::PostInitializeComponents();
 }
 
 AValorAICharacter* AValorAIController::GetValorAICharacter() const

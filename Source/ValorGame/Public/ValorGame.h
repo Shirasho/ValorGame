@@ -19,13 +19,11 @@
 #include "ValorOnlineDefinitions.h"     // Online definitions
 #include "ValorPlayerDefinitions.h"     // Player definitions
 #include "ValorUIDefinitions.h"         // UI definitions
+#include "ValorLogDefinitions.h"		// Logging macros
+#include "ValorDataDefinitions.h"		// Definitions for data curves and tables
 
 DECLARE_LOG_CATEGORY_EXTERN(LogValor, Log, All);
 DECLARE_LOG_CATEGORY_EXTERN(LogValorClient, Log, All);
 DECLARE_LOG_CATEGORY_EXTERN(LogValorServer, Log, All);
 DECLARE_LOG_CATEGORY_EXTERN(LogValorHero, Log, All);
 
-#define VALOR_LOG(Message) if (GEngine) { GEngine->AddOnScreenDebugMessage(INDEX_NONE, 3.f, FColor::Cyan, TEXT(Message), false); }
-#define VALOR_LOGF(Message) if (GEngine) { GEngine->AddOnScreenDebugMessage(INDEX_NONE, 3.f, FColor::Cyan, Message, false); }
-
-#define FIND_ROW_CONTEXT TEXT("VALOR_ROW_CONTEXT")

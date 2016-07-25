@@ -4,7 +4,7 @@
 
 #include "ValorCharacterStatTableRow.generated.h"
 
-/* Structure that contains information about how a hero progresses as they level up. */
+/* Structure that contains information about a hero's base stats. */
 USTRUCT(BlueprintType)
 struct FValorCharacterStatTableRow : public FTableRowBase
 {
@@ -13,23 +13,62 @@ struct FValorCharacterStatTableRow : public FTableRowBase
 public:
 
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = Stats)
-		float BaseHealth;
+		float L1;
 
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = Stats)
-		float BaseHealthRegen;
+		float L2;
 
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = Stats)
-		float BasePrimaryResource;
+		float L3;
 
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = Stats)
-		float BasePrimaryResourceRegen;
+		float L4;
 
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = Stats)
-		float BaseSecondaryResource;
+		float L5;
 
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = Stats)
-		float BaseSecondaryResourceRegen;
+		float L6;
 
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = Stats)
-		uint8 MaxSecondaryResource;
+		float L7;
+
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = Stats)
+		float L8;
+
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = Stats)
+		float L9;
+
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = Stats)
+		float L10;
+
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = Stats)
+		float L11;
+
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = Stats)
+		float L12;
+
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = Stats)
+		float L13;
+
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = Stats)
+		float L14;
+
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = Stats)
+		float L15;
+
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = Stats)
+		float L16;
+
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = Stats)
+		float L17;
+
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = Stats)
+		float L18;
+
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = Stats)
+		float L19;
+
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = Stats)
+		float L20;
 };

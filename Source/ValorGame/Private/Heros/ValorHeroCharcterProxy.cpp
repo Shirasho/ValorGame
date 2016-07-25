@@ -3,7 +3,7 @@
 #include "ValorGame.h"
 #include "ValorHeroCharacterProxy.h"
 #include "ValorHeroCharacter.h"
-#include "AIController.h"
+#include "ValorHeroAIController.h"
 
 
 AValorHeroCharacterProxy::AValorHeroCharacterProxy(const FObjectInitializer& ObjectInitializer)
@@ -59,7 +59,7 @@ void AValorHeroCharacterProxy::BeginPlay()
 
 		Character = Cast<AValorHeroCharacter>(GetWorld()->SpawnActor(CharacterClass, &Location, &Rotation, SpawnParameters));
 
-		CharacterAI = GetWorld()->SpawnActor<AAIController>(GetActorLocation(), GetActorRotation());
+		CharacterAI = GetWorld()->SpawnActor<AValorHeroAIController>(GetActorLocation(), GetActorRotation());
 		CharacterAI->Possess(Character);
 	}
 }

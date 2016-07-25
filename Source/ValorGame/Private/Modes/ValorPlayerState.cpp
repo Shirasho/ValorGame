@@ -4,7 +4,6 @@
 #include "ValorPlayerState.h"
 
 #include "ValorPlayerDefinitions.h"
-
 #include "ValorHeroCharacter.h"
 
 AValorPlayerState::AValorPlayerState(const FObjectInitializer& ObjectInitializer)
@@ -14,8 +13,8 @@ AValorPlayerState::AValorPlayerState(const FObjectInitializer& ObjectInitializer
 	PlayerKills = 0;
 	PlayerDeaths = 0;
 	PlayerAssists = 0;
-	PlayerInventory_HealthFromItems = 0;
-	PlayerInventory_PrimaryResourceFromItems = 0;
+	PlayerLevel = 1;
+	PlayerExperience = 0;
 	bLeaver = false;
 }
 
@@ -27,8 +26,8 @@ void AValorPlayerState::Reset()
 	PlayerKills = 0;
 	PlayerDeaths = 0;
 	PlayerAssists = 0;
-	PlayerInventory_HealthFromItems = 0;
-	PlayerInventory_PrimaryResourceFromItems = 0;
+	PlayerLevel = 1;
+	PlayerExperience = 0;
 	bLeaver = false;
 }
 
@@ -59,14 +58,7 @@ void AValorPlayerState::OnRep_PlayerTeam()
 
 void AValorPlayerState::OnRep_Inventory()
 {
-	PlayerInventory_HealthFromItems = 0;
-	PlayerInventory_PrimaryResourceFromItems = 0;
 
-	for (const AActor* InventoryItem : PlayerInventory)
-	{
-		PlayerInventory_HealthFromItems += 0;
-		PlayerInventory_PrimaryResourceFromItems += 0;
-	}
 }
 
 void AValorPlayerState::OnRep_PlayerHero()
@@ -74,9 +66,30 @@ void AValorPlayerState::OnRep_PlayerHero()
 
 }
 
-EValorTeam AValorPlayerState::GetTeam() const
+void AValorPlayerState::IncrementPlayerLevel(const TArray<int32>& ExperienceRequiredToLevel)
+{
+	check(ExperienceRequiredToLevel.Num() == VALOR_MAX_CHARACTER_LEVEL - 1);
+
+	while (PlayerLevel < VALOR_MAX_CHARACTER_LEVEL && PlayerExperience >= ExperienceRequiredToLevel[PlayerLevel - 1])
+	{
+		++PlayerLevel;
+		PlayerExperience = FMath::Max(PlayerExperience - FMath::Abs(ExperienceRequiredToLevel[PlayerLevel - 1]), 0);
+	}
+}
+
+EValorTeam AValorPlayerState::GetPlayerTeam() const
 {
 	return PlayerTeam;
+}
+
+uint8 AValorPlayerState::GetPlayerLevel() const
+{
+	return PlayerLevel;
+}
+
+int32 AValorPlayerState::GetPlayerExperience() const
+{
+	return PlayerExperience;
 }
 
 bool AValorPlayerState::IsLeaver() const
@@ -84,19 +97,52 @@ bool AValorPlayerState::IsLeaver() const
 	return bLeaver;
 }
 
-uint32 AValorPlayerState::GetKills() const
+uint32 AValorPlayerState::GetPlayerKills() const
 {
 	return PlayerKills;
 }
 
-uint32 AValorPlayerState::GetDeaths() const
+uint32 AValorPlayerState::GetPlayerDeaths() const
 {
 	return PlayerDeaths;
 }
 
-uint32 AValorPlayerState::GetAssists() const
+uint32 AValorPlayerState::GetPlayerAssists() const
 {
 	return PlayerAssists;
+}
+
+const TArray<FValorInventoryItem>& AValorPlayerState::GetPlayerInventory() const
+{
+	return PlayerInventory;
+}
+
+float AValorPlayerState::GetPlayerHealthFromItems(const float BaseHealth, const float BonusHealth) const
+{
+	return 0.f;
+}
+
+float AValorPlayerState::GetPlayerPrimaryResourceFromItems(const float BasePrimaryResource, const float BonusPrimaryResource) const
+{
+	return 0.f;
+}
+
+float AValorPlayerState::GetPlayerSecondaryResourceFromItems(const float BaseSecondaryResource, const float BonusSecondaryResource) const
+{
+	return 0.f;
+}
+
+float AValorPlayerState::GetPlayerHealthRegenFromItems(const float BaseHealthRegen, const float BonusHealthRegen, const float BaseHealth, const float BonusHealth) const
+{
+	return 0.f;
+}
+float AValorPlayerState::GetPlayerPrimaryResourceRegenFromItems(const float BasePrimaryResourceRegen, const float BonusPrimaryResourceRegen, const float BasePrimaryResource, const float BonusPrimaryResource) const
+{
+	return 0.f;
+}
+float AValorPlayerState::GetPlayerSecondaryResourceRegenFromItems(const float BaseSecondaryResourceRegen, const float BonusSecondaryResourceRegen, const float BaseSecondaryResource, const float BonusSecondaryResource) const
+{
+	return 0.f;
 }
 
 FString AValorPlayerState::GetShortPlayerName() const
@@ -107,28 +153,6 @@ FString AValorPlayerState::GetShortPlayerName() const
 	}
 
 	return PlayerName;
-}
-
-float AValorPlayerState::GetHealthFromItems() const
-{
-	return PlayerInventory_HealthFromItems;
-}
-
-float AValorPlayerState::GetPrimaryResourceFromItems() const
-{
-	return PlayerInventory_PrimaryResourceFromItems;
-}
-
-float AValorPlayerState::GetHealthRegenFromItems(float BaseHealthRegen) const
-{
-	/* We need to iterate over the inventory for this one. */
-	return 0.f;
-}
-
-float AValorPlayerState::GetPrimaryResourceRegenFromItems(float BasePrimaryResourceRegen) const
-{
-	/* We need to iterate over the inventory for this one. */
-	return 0.f;
 }
 
 void AValorPlayerState::ScoreKill(AValorPlayerState* Victim)
@@ -162,13 +186,6 @@ void AValorPlayerState::CopyProperties(APlayerState* PlayerState)
 	if (ValorPlayerState)
 	{
 		ValorPlayerState->HeroCharacter = HeroCharacter;
-
-
-		/*ValorPlayerState->PlayerKills = PlayerKills;
-		ValorPlayerState->PlayerDeaths = PlayerDeaths;
-		ValorPlayerState->PlayerAssists = PlayerAssists;
-		ValorPlayerState->PlayerTeam = PlayerTeam;
-		ValorPlayerState->PlayerInventory = PlayerInventory;*/
 	}
 }
 
@@ -180,5 +197,7 @@ void AValorPlayerState::GetLifetimeReplicatedProps(TArray< FLifetimeProperty > &
 	DOREPLIFETIME(AValorPlayerState, PlayerKills);
 	DOREPLIFETIME(AValorPlayerState, PlayerDeaths);
 	DOREPLIFETIME(AValorPlayerState, PlayerAssists);
+	DOREPLIFETIME(AValorPlayerState, PlayerLevel);
+	DOREPLIFETIME(AValorPlayerState, PlayerExperience);
 	DOREPLIFETIME(AValorPlayerState, PlayerInventory);
 }

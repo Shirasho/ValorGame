@@ -3,6 +3,7 @@
 #pragma once
 
 #include "ValorTypes.h"
+#include "ValorInventoryItem.h"
 #include "ValorPlayerState.generated.h"
 
 UCLASS()
@@ -27,16 +28,17 @@ protected:
 	UPROPERTY(Transient, Replicated)
 	uint32 PlayerAssists;
 
+	UPROPERTY(Transient, Replicated)
+	uint8 PlayerLevel;
+
+	UPROPERTY(Transient, Replicated)
+	int32 PlayerExperience;
+
 	UPROPERTY(Transient, ReplicatedUsing=OnRep_Inventory)
-	TArray<AActor*> PlayerInventory;
+	TArray<FValorInventoryItem> PlayerInventory;
 
 	UPROPERTY()
 	bool bLeaver;
-
-protected:
-
-	float PlayerInventory_HealthFromItems;
-	float PlayerInventory_PrimaryResourceFromItems;
 
 public:
 
@@ -50,10 +52,9 @@ public:
 
 	virtual bool IsEnemyOf(const AValorPlayerState* OtherPlayerState) const;
 
-	float GetHealthFromItems() const;
-	float GetPrimaryResourceFromItems() const;
-	float GetHealthRegenFromItems(float BaseHealthRegen) const;
-	float GetPrimaryResourceRegenFromItems(float BasePrimaryResourceRegen) const;
+public:
+
+	void IncrementPlayerLevel(const TArray<int32>& ExperienceRequiredToLevel);
 
 public:
 
@@ -67,11 +68,24 @@ public:
 
 	void SetLeaver(bool bInLeaver);
 
-	EValorTeam GetTeam() const;
-	uint32 GetKills() const;
-	uint32 GetDeaths() const;
-	uint32 GetAssists() const;
+	EValorTeam GetPlayerTeam() const;
+	uint32 GetPlayerKills() const;
+	uint32 GetPlayerDeaths() const;
+	uint32 GetPlayerAssists() const;
+	uint8 GetPlayerLevel() const;
+	int32 GetPlayerExperience() const;
+
 	bool IsLeaver() const;
+
+	const TArray<FValorInventoryItem>& GetPlayerInventory() const;
+
+	float GetPlayerHealthFromItems(const float BaseHealth, const float BonusHealth) const;
+	float GetPlayerPrimaryResourceFromItems(const float BasePrimaryResource, const float BonusPrimaryResource) const;
+	float GetPlayerSecondaryResourceFromItems(const float BaseSecondaryResource, const float BonusSecondaryResource) const;
+	
+	float GetPlayerHealthRegenFromItems(const float BaseHealthRegen, const float BonusHealthRegen, const float BaseHealth, const float BonusHealth) const;
+	float GetPlayerPrimaryResourceRegenFromItems(const float BasePrimaryResourceRegen, const float BonusPrimaryResourceRegen, const float BasePrimaryResource, const float BonusPrimaryResource) const;
+	float GetPlayerSecondaryResourceRegenFromItems(const float BaseSecondaryResourceRegen, const float BonusSecondaryResourceRegen, const float BaseSecondaryResource, const float BonusSecondaryResource) const;
 
 	FString GetShortPlayerName() const;
 

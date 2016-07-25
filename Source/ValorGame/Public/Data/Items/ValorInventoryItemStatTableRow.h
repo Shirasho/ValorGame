@@ -2,70 +2,58 @@
 
 #pragma once
 
-#include "ValorCharacterExperienceTableRow.generated.h"
+#include "ValorInventoryItemStatTableRow.generated.h"
 
-/* Structure that contains information about a hero's base stats. */
+/* Structure that contains information about how a hero progresses as they level up. */
 USTRUCT(BlueprintType)
-struct FValorCharacterExperienceTableRow : public FTableRowBase
+struct FValorInventoryItemStatTableRow : public FTableRowBase
 {
 	GENERATED_USTRUCT_BODY()
 
 public:
 
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = Stats)
-		int32 L2;
+		FText DisplayName;
 
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = Stats)
-		int32 L3;
+		FString DisplayTexture;
 
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = Stats)
-		int32 L4;
+		float BonusHealthFlat;
 
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = Stats)
-		int32 L5;
+		float BonusHealthPercentBase;
 
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = Stats)
-		int32 L6;
+		float BonusHealthPercentMax;
+
 
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = Stats)
-		int32 L7;
+		float BonusPrimaryResourceFlat;
 
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = Stats)
-		int32 L8;
+		float BonusPrimaryResourcePercentBase;
 
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = Stats)
-		int32 L9;
+		float BonusPrimaryResourcePercentMax;
+
 
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = Stats)
-		int32 L10;
+		float BonusHealthRegenFlat;
 
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = Stats)
-		int32 L11;
+		float BonusHealthRegenPercentBase;
 
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = Stats)
-		int32 L12;
+		float BonusHealthRegenPercentMax;
+
 
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = Stats)
-		int32 L13;
+		float BonusPrimaryResourceRegenFlat;
 
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = Stats)
-		int32 L14;
+		float BonusPrimaryResourceRegenPercentBase;
 
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = Stats)
-		int32 L15;
-
-	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = Stats)
-		int32 L16;
-
-	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = Stats)
-		int32 L17;
-
-	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = Stats)
-		int32 L18;
-
-	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = Stats)
-		int32 L19;
-
-	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = Stats)
-		int32 L20;
+		float BonusPrimaryResourceRegenPercentMax;
 };

@@ -30,6 +30,11 @@ void AValorHeroCharacter::PostInitializeComponents()
 	Super::PostInitializeComponents();
 }
 
+void AValorHeroCharacter::BeginPlay()
+{
+	Super::BeginPlay();
+}
+
 void AValorHeroCharacter::Tick(float DeltaSeconds)
 {
 	Super::Tick(DeltaSeconds);

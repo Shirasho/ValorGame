@@ -111,8 +111,9 @@ AValorHeroCharacter* AValorPlayerController::GetValorHeroCharacter() const
 
 void AValorPlayerController::OnPrimaryAction1Pressed()
 {
-	FString Message = FString::Printf(TEXT("Player health: %f"), GetValorHeroCharacter()->GetHealth());
-	VALOR_LOGF(Message);
+	//FString Message = FString::Printf(TEXT("Player health: %f"), GetValorHeroCharacter()->GetHealth());
+	//VALOR_LOGF(Message);
+	VALOR_LOG("Player health: %f", GetValorHeroCharacter()->GetBaseHealth());
 }
 
 void AValorPlayerController::OnPrimaryAction1Released()

@@ -22,6 +22,10 @@ private:
 
 public:
 
+	void PostInitializeComponents() override;
+
+public:
+
 	AValorAICharacter* GetValorAICharacter() const;
 
 	FORCEINLINE UBlackboardComponent* GetBlackboardComponent() const 

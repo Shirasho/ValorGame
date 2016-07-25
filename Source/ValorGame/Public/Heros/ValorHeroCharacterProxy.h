@@ -32,7 +32,7 @@ protected:
 	AValorHeroCharacter* Character;
 
 	/* The AI Controller that will auto-navigate the player. */
-	class AAIController* CharacterAI;
+	class AValorHeroAIController* CharacterAI;
 
 public:
 
