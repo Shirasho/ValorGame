@@ -11,6 +11,8 @@
 #include "ValorHeroCharacter.h"
 #include "ValorHeroCharacterProxy.h"
 
+
+
 AValorPlayerController::AValorPlayerController(const FObjectInitializer& ObjectInitializer)
     : Super(ObjectInitializer)
 {
@@ -20,7 +22,44 @@ AValorPlayerController::AValorPlayerController(const FObjectInitializer& ObjectI
 	PlayerCameraManagerClass = AValorPlayerCameraManager::StaticClass();
 	CheatClass = UValorCheatManager::StaticClass();
 
+	bFirstTick = true;
+
 	bReplicates = true;
+}
+
+void AValorPlayerController::PostInitializeComponents()
+{
+	Super::PostInitializeComponents();
+}
+
+void AValorPlayerController::BeginPlay()
+{
+	Super::BeginPlay();
+}
+
+void AValorPlayerController::Tick(float DeltaSeconds)
+{
+	Super::Tick(DeltaSeconds);
+
+	if (bFirstTick)
+	{
+		bFirstTick = false;
+
+		if (GetNetMode() != NM_DedicatedServer)
+		{
+			const AValorHeroCharacter* PlayerCharacter = GetValorHeroCharacter();
+			if (PlayerCharacter && PlayerCharacter->GetValorHeroInitilizationProperties().MainUserInterface)
+			{
+				MainUserInterface = CreateWidget<UValorUserWidget>(this, PlayerCharacter->GetValorHeroInitilizationProperties().MainUserInterface);
+				FInputModeGameAndUI Mode;
+				//Mode.SetWidgetToFocus(MainUserInterface->GetCachedWidget());
+				Mode.SetLockMouseToViewport(true);
+				Mode.SetHideCursorDuringCapture(false);
+				SetInputMode(Mode);
+				MainUserInterface->AddToViewport(9999);
+			}
+		}
+	}
 }
 
 void AValorPlayerController::SetupInputComponent()
@@ -106,7 +145,11 @@ AValorHeroCharacterProxy* AValorPlayerController::GetValorHeroCharacterProxy() c
 
 AValorHeroCharacter* AValorPlayerController::GetValorHeroCharacter() const
 {
-	return GetValorHeroCharacterProxy()->GetValorHeroCharacter();
+	if (GetValorHeroCharacterProxy())
+	{
+		return GetValorHeroCharacterProxy()->GetValorHeroCharacter();
+	}
+	return nullptr;
 }
 
 void AValorPlayerController::OnPrimaryAction1Pressed()
@@ -139,7 +182,7 @@ void AValorPlayerController::OnPrimaryAction2Pressed()
 			GetValorHeroCharacterProxy()->OnCharacterMovement();
 		}
 
-		GetWorld()->GetTimerManager().SetTimer(TimerHandle_MoveToCursor, this, &AValorPlayerController::OnPrimaryAction2Pressed, GetWorldSettings()->GetEffectiveTimeDilation() * 0.5f, false);
+		GetWorld()->GetTimerManager().SetTimer(TimerHandle_MoveToCursor, this, &AValorPlayerController::OnPrimaryAction2Pressed, GetWorldSettings()->GetEffectiveTimeDilation() * 0.45f, false);
 	}
 }
 
@@ -152,7 +195,7 @@ void AValorPlayerController::OnPrimaryAction2Released()
 
 void AValorPlayerController::OnAbilityAction1Pressed()
 {
-
+	VALOR_LOG("AbilityAction1Pressed()");
 }
 
 void AValorPlayerController::OnAbilityAction1Released()

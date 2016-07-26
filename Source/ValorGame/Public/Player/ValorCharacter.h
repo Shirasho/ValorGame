@@ -8,8 +8,6 @@
 
 #define VALOR_MAX_CHARACTER_LEVEL 20
 
-class UValorCharacterMovementComponent;
-
 UCLASS(Abstract)
 class AValorCharacter : public ACharacter
 {
@@ -36,17 +34,10 @@ protected:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, meta = (AllowPrivateAccess = "true"), Category = Character)
 	UCapsuleComponent* AbilityHitbox;
 
-	/* The hitbox used for collision with other characters. */
-	/*UPROPERTY(Category = Character, EditAnywhere, BlueprintReadWrite, meta = (AllowPrivateAccess = "true"))
-	UCapsuleComponent* CharacterHitbox;*/
-
-	/* The hitbox used for collision with terrain. */
-	/*UPROPERTY(Category = Character, EditAnywhere, BlueprintReadWrite, meta = (AllowPrivateAccess = "true"))
-	UCapsuleComponent* TerrainHitbox;*/
-
 private:
 
-	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Replicated, meta=(AllowPrivateAccess="true"), Category = Stats)
+	/* Default character stats that apply to all characters. */
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Replicated, meta=(AllowPrivateAccess="true"), Category = Defaults)
 	FValorCharacterStatContainer CharacterStats;
 
 private:

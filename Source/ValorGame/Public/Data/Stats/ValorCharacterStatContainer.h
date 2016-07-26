@@ -30,86 +30,86 @@ public:
 public:
 
 	/* The current health of the character. */
-	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = Stats)
+	UPROPERTY(BlueprintReadOnly, Category = Stats)
 		float Health;
 	/* The current primary resource (mana) of the character. */
-	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = Stats)
+	UPROPERTY(BlueprintReadOnly, Category = Stats)
 		float PrimaryResource;
 	/* The current secondary resource (character-specific) of the character. */
-	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = Stats)
+	UPROPERTY(BlueprintReadOnly, Category = Stats)
 		float SecondaryResource;
 	/* The current health regen of the character. */
-	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = Stats)
+	UPROPERTY(BlueprintReadOnly, Category = Stats)
 		float HealthRegen;
 	/* The current health regen of the character. */
-	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = Stats)
+	UPROPERTY(BlueprintReadOnly, Category = Stats)
 		float PrimaryResourceRegen;
 	/* The current health regen of the character. */
-	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = Stats)
+	UPROPERTY(BlueprintReadOnly, Category = Stats)
 		float SecondaryResourceRegen;
 
 public:
 
 	/* The base health of the character. */
-	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = Stats)
+	UPROPERTY(BlueprintReadOnly, Category = Stats)
 		float BaseHealth;
 	/* The base primary resource (mana) of the character. */
-	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = Stats)
+	UPROPERTY(BlueprintReadOnly, Category = Stats)
 		float BasePrimaryResource;
 
-	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = Stats)
+	UPROPERTY(BlueprintReadOnly, Category = Stats)
 		float BaseSecondaryResource;
 
-	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = Stats)
+	UPROPERTY(BlueprintReadOnly, Category = Stats)
 		float BaseHealthRegen;
 
-	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = Stats)
+	UPROPERTY(BlueprintReadOnly, Category = Stats)
 		float BasePrimaryResourceRegen;
 
-	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = Stats)
+	UPROPERTY(BlueprintReadOnly, Category = Stats)
 		float BaseSecondaryResourceRegen;
 
 public:
 
-	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = Stats)
+	UPROPERTY(BlueprintReadOnly, Category = Stats)
 		float BonusHealth;
 
-	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = Stats)
+	UPROPERTY(BlueprintReadOnly, Category = Stats)
 		float BonusPrimaryResource;
 
-	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = Stats)
+	UPROPERTY(BlueprintReadOnly, Category = Stats)
 		float BonusSecondaryResource;
 
-	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = Stats)
+	UPROPERTY(BlueprintReadOnly, Category = Stats)
 		float BonusHealthRegen;
 
-	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = Stats)
+	UPROPERTY(BlueprintReadOnly, Category = Stats)
 		float BonusPrimaryResourceRegen;
 
-	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = Stats)
+	UPROPERTY(BlueprintReadOnly, Category = Stats)
 		float BonusSecondaryResourceRegen;
 
 public:
 
-	UPROPERTY()
+	UPROPERTY(BlueprintReadOnly, Category = Stats)
 		TArray<int32> ExperienceRequiredPerLevel;
 
-	UPROPERTY()
+	UPROPERTY(BlueprintReadOnly, Category = Stats)
 		TArray<float> HealthGainPerLevel;
 
-	UPROPERTY()
+	UPROPERTY(BlueprintReadOnly, Category = Stats)
 		TArray<float> PrimaryResourceGainPerLevel;
 
-	UPROPERTY()
+	UPROPERTY(BlueprintReadOnly, Category = Stats)
 		TArray<float> SecondaryResourceGainPerLevel;
 
-	UPROPERTY()
+	UPROPERTY(BlueprintReadOnly, Category = Stats)
 		TArray<float> HealthRegenPerLevel;
 
-	UPROPERTY()
+	UPROPERTY(BlueprintReadOnly, Category = Stats)
 		TArray<float> PrimaryResourceRegenPerLevel;
 
-	UPROPERTY()
+	UPROPERTY(BlueprintReadOnly, Category = Stats)
 		TArray<float> SecondaryResourceRegenPerLevel;
 
 public:

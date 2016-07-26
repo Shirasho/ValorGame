@@ -57,6 +57,11 @@ enum class EValorAbilityAimType : uint8
 UENUM(BlueprintType, meta = (Bitflags))
 enum class EValorTeam : uint8
 {
+	/* DO NOT USE!!
+	   Invalid needed since the first value is flagged as 0 in source,
+	   meaning we can't do bit operations on it.
+	*/
+	Invalid UMETA(Hidden),
     None,
     One,
     Two,

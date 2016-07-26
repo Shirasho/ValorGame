@@ -60,42 +60,45 @@ AActor* AValorGameMode::ChoosePlayerStart_Implementation(AController* Player)
 
 	APlayerStart* BestStart = nullptr;
 
+	// Always prefer the first "Play from Here" PlayerStart, if we find one while in PIE mode.
 	for (TActorIterator<APlayerStart> It(GetWorld()); It; ++It)
 	{
 		APlayerStart* TestSpawn = *It;
 		if (TestSpawn->IsA<APlayerStartPIE>())
 		{
-			// Always prefer the first "Play from Here" PlayerStart, if we find one while in PIE mode.
-			BestStart = TestSpawn;
-			break;
+			return TestSpawn;
 		}
-		else
+	}
+
+	/* NOTE - objects can only be spawned into the persistent level. Using TObjectIterator would
+	 * fix the issue, but we run into potential PIE object conflicts. */
+	for (TActorIterator<AValorPlayerStart> It(Player->GetWorld()); It; ++It)
+	//for (TObjectIterator<AValorPlayerStart> It; It; ++It)
+	{
+		AValorPlayerStart* TestSpawn = *It;
+
+		if (IsPlayerStartAllowed(TestSpawn, Player))
 		{
-			if (IsPlayerStartAllowed(TestSpawn, Player))
+			if (IsPlayerStartPreferred(TestSpawn, Player))
 			{
-				if (IsPlayerStartPreferred(TestSpawn, Player))
-				{
-					PreferredSpawns.Add(TestSpawn);
-				}
-				else
-				{
-					FallbackSpawns.Add(TestSpawn);
-				}
+				PreferredSpawns.Add(TestSpawn);
+			}
+			else
+			{
+				FallbackSpawns.Add(TestSpawn);
 			}
 		}
 	}
 
-	if (!BestStart)
+	if (PreferredSpawns.Num() > 0)
 	{
-		if (PreferredSpawns.Num() > 0)
-		{
-			BestStart = PreferredSpawns[FMath::RandHelper(PreferredSpawns.Num())];
-		}
-		else if (FallbackSpawns.Num() > 0)
-		{
-			BestStart = FallbackSpawns[FMath::RandHelper(FallbackSpawns.Num())];
-		}
+		BestStart = PreferredSpawns[FMath::RandHelper(PreferredSpawns.Num())];
 	}
+	else if (FallbackSpawns.Num() > 0)
+	{
+		BestStart = FallbackSpawns[FMath::RandHelper(FallbackSpawns.Num())];
+	}
+	
 
 	return BestStart ? BestStart : Super::ChoosePlayerStart_Implementation(Player);
 }
@@ -143,15 +146,23 @@ bool AValorGameMode::IsPlayerStartAllowed(APlayerStart* SpawnPoint, AController*
 	if (ValorSpawnPoint)
 	{
 		const AValorAIController* ValorAIController = Cast<AValorAIController>(Player);
-		if (ValorAIController)
+
+		/* Since PlayerControllers are proxy controllers they do not require a spawn point.
+		 * That means that all spawnables should extend ValorAIController. Anything else shouldn't
+		 * be spawned. In the case of PlayerControllers they will be spawned in the middle of the map
+		 * at the only APlayerStart in the level, and the transform is handled in the ValorHeroCharacterProxy tick. */
+		if (!ValorAIController)
 		{
-			return ValorSpawnPoint->bCanSpawnMinions && ((static_cast<uint8>(ValorAIController->GetValorAICharacter()->GetTeam()) & ValorSpawnPoint->SpawnTeam) > 0);
+			return false;
 		}
 
-		const AValorPlayerController* ValorPlayerController = Cast<AValorPlayerController>(Player);
-		if (ValorPlayerController)
+		if (ValorAIController->IsA<AValorAIHeroController>())
 		{
-			return ValorSpawnPoint->bCanSpawnMinions && ((static_cast<uint8>(ValorPlayerController->GetValorHeroCharacter()->GetTeam()) & ValorSpawnPoint->SpawnTeam) > 0);
+			return ValorSpawnPoint->bCanSpawnPlayers && ((static_cast<uint8>(ValorAIController->GetValorAICharacter()->GetTeam()) & ValorSpawnPoint->SpawnTeam) > 0);
+		}
+		else
+		{
+			return ValorSpawnPoint->bCanSpawnMinions && ((static_cast<uint8>(ValorAIController->GetValorAICharacter()->GetTeam()) & ValorSpawnPoint->SpawnTeam) > 0);
 		}
 	}
 

@@ -76,20 +76,6 @@ void AValorCharacter::PostInitializeComponents()
 		PrimaryActorTick.bCanEverTick = true;
 		PrimaryActorTick.bStartWithTickEnabled = false;
 	}
-
-	if (GetNetMode() != NM_DedicatedServer)
-	{
-		/*
-		if (RespawnParticleSystem)
-		{
-			UGameplayStatics::SpawnEmitterAtLocation(this, RespawnparticleSystem, GetActorLocation(), GetActorRotation());
-		}
-		if (RespawnSoundCue)
-		{
-			UGameplayStatics::PlaySoundAtLocation(this, RespawnSound, GetActorLocation());
-		}
-		*/
-	}
 }
 
 void AValorCharacter::PossessedBy(AController* Controller)

@@ -11,7 +11,18 @@ class AValorPlayerController : public APlayerController
 
     GENERATED_UCLASS_BODY()
 
+protected:
+
+	/* The UValorUserWidget to use as the main GUI. */
+	class UValorUserWidget* MainUserInterface;
+
 private:
+
+	/* Since proxy character possession happens on BeginPlay() there
+	 * is no guarantee that ValorPlayerController::BeginPlay() will be
+	 * called after the proxy character is ready. A workaround to this
+	 * is to perform these calls in the first Tick() frame. */
+	bool bFirstTick;
 
 	/* Timer used to keep attempting to start an online game until it works. */
 	FTimerHandle TimerHandle_ClientStartOnlineGame;
@@ -22,6 +33,12 @@ private:
 protected:
 
     virtual void SetupInputComponent() override;
+
+	virtual void PostInitializeComponents() override;
+
+	virtual void BeginPlay() override;
+
+	virtual void Tick(float DeltaSeconds) override;
 
 public:
 
@@ -55,81 +72,119 @@ protected:
 	/* [Server] Move the player to the specified location. */
 	void MoveToCursor(const FHitResult& HitResult);
 
-protected:
+public:
 
+	UFUNCTION(BlueprintCallable, Category = Input)
     void OnPrimaryAction1Pressed();
 
+	UFUNCTION(BlueprintCallable, Category = Input)
     void OnPrimaryAction1Released();
 
+	UFUNCTION(BlueprintCallable, Category = Input)
     void OnPrimaryAction2Pressed();
 
+	UFUNCTION(BlueprintCallable, Category = Input)
     void OnPrimaryAction2Released();
 
+	UFUNCTION(BlueprintCallable, Category = Input)
     void OnAbilityAction1Pressed();
 
+	UFUNCTION(BlueprintCallable, Category = Input)
     void OnAbilityAction1Released();
 
+	UFUNCTION(BlueprintCallable, Category = Input)
     void OnAbilityAction2Pressed();
 
+	UFUNCTION(BlueprintCallable, Category = Input)
     void OnAbilityAction2Released();
 
+	UFUNCTION(BlueprintCallable, Category = Input)
     void OnAbilityAction3Pressed();
 
+	UFUNCTION(BlueprintCallable, Category = Input)
     void OnAbilityAction3Released();
 
+	UFUNCTION(BlueprintCallable, Category = Input)
     void OnAbilityAction4Pressed();
 
+	UFUNCTION(BlueprintCallable, Category = Input)
     void OnAbilityAction4Released();
 
+	UFUNCTION(BlueprintCallable, Category = Input)
     void OnAbilitySpell1Pressed();
 
+	UFUNCTION(BlueprintCallable, Category = Input)
     void OnAbilitySpell1Released();
 
+	UFUNCTION(BlueprintCallable, Category = Input)
     void OnAbilitySpell2Pressed();
 
+	UFUNCTION(BlueprintCallable, Category = Input)
     void OnAbilitySpell2Released();
 
+	UFUNCTION(BlueprintCallable, Category = Input)
     void OnUseItem1Pressed();
 
+	UFUNCTION(BlueprintCallable, Category = Input)
     void OnUseItem2Pressed();
 
+	UFUNCTION(BlueprintCallable, Category = Input)
     void OnUseItem3Pressed();
 
+	UFUNCTION(BlueprintCallable, Category = Input)
     void OnCameraZoomInPressed();
 
+	UFUNCTION(BlueprintCallable, Category = Input)
     void OnCameraZoomOutPressed();
 
+	UFUNCTION(BlueprintCallable, Category = Input)
     void OnCameraCenterPressed();
 
+	UFUNCTION(BlueprintCallable, Category = Input)
     void OnCameraPanLeftPressed();
 
+	UFUNCTION(BlueprintCallable, Category = Input)
     void OnCameraPanLeftReleased();
 
+	UFUNCTION(BlueprintCallable, Category = Input)
     void OnCameraPanRightPressed();
 
+	UFUNCTION(BlueprintCallable, Category = Input)
     void OnCameraPanRightReleased();
 
+	UFUNCTION(BlueprintCallable, Category = Input)
     void OnCameraPanUpPressed();
 
+	UFUNCTION(BlueprintCallable, Category = Input)
     void OnCameraPanUpReleased();
 
+	UFUNCTION(BlueprintCallable, Category = Input)
     void OnCameraPanDownPressed();
 
+	UFUNCTION(BlueprintCallable, Category = Input)
     void OnCameraPanDownReleased();
 
+	UFUNCTION(BlueprintCallable, Category = Input)
     void OnCameraPanPrecise1Pressed();
 
+	UFUNCTION(BlueprintCallable, Category = Input)
     void OnCameraPanPrecise2Pressed();
 
+	UFUNCTION(BlueprintCallable, Category = Input)
     void OnCameraPanPrecise3Pressed();
 
+	UFUNCTION(BlueprintCallable, Category = Input)
     void OnCameraPanPrecise4Pressed();
 
+	UFUNCTION(BlueprintCallable, Category = Input)
     void OnToggleMenuPressed();
 
+	UFUNCTION(BlueprintCallable, Category = Input)
     void OnToggleScoreboardPressed();
 
+	UFUNCTION(BlueprintCallable, Category = Input)
     void OnPushToTalkPressed();
 
+	UFUNCTION(BlueprintCallable, Category = Input)
     void OnPushToTalkReleased();
 };

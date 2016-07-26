@@ -16,6 +16,15 @@ AValorPlayerState::AValorPlayerState(const FObjectInitializer& ObjectInitializer
 	PlayerLevel = 1;
 	PlayerExperience = 0;
 	bLeaver = false;
+
+	if (HasAuthority())
+	{
+		static ConstructorHelpers::FClassFinder<AValorHeroCharacter> CH_PlayerPawn(TEXT("/Game/Heros/Natsu/Natsu_BP"));
+		if (CH_PlayerPawn.Succeeded())
+		{
+			HeroCharacter = CH_PlayerPawn.Class;
+		}
+	}
 }
 
 void AValorPlayerState::Reset()
@@ -48,6 +57,7 @@ void AValorPlayerState::SetLeaver(bool bInLeaver)
 
 void AValorPlayerState::SetTeam(EValorTeam NewTeam)
 {
+	check(NewTeam != EValorTeam::Invalid);
 	PlayerTeam = NewTeam;
 }
 
@@ -79,6 +89,7 @@ void AValorPlayerState::IncrementPlayerLevel(const TArray<int32>& ExperienceRequ
 
 EValorTeam AValorPlayerState::GetPlayerTeam() const
 {
+	check(PlayerTeam != EValorTeam::Invalid);
 	return PlayerTeam;
 }
 

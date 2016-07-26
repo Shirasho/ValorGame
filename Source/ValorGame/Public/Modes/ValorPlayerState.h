@@ -11,10 +11,12 @@ class AValorPlayerState : public APlayerState
 {
 	GENERATED_UCLASS_BODY()
 
-protected:
+public:
 
 	UPROPERTY(Transient, ReplicatedUsing = OnRep_PlayerHero)
 	TSubclassOf<class AValorHeroCharacter> HeroCharacter;
+
+protected:
 
 	UPROPERTY(Transient, ReplicatedUsing=OnRep_PlayerTeam)
 	EValorTeam PlayerTeam;
