@@ -46,15 +46,21 @@ private:
 
 public:
 
-	virtual void PossessedBy(AController* Controller) override;
+	//virtual void PreInitializeComponents() override;
 
 	virtual void PostInitializeComponents() override;
 
-	virtual void BeginPlay() override;
+	//virtual void BeginPlay() override;
 
-	virtual void Tick(float DeltaSeconds) override;
+	virtual void EndPlay(const EEndPlayReason::Type EndPlayReason) override;
+
+	//virtual void Tick(float DeltaSeconds) override;
+
+	//virtual void PossessedBy(AController* Controller) override;
 
 public:
+
+	virtual void InitStats();
 
 	/* [Server] Returns whether the specified character is an enemy of this character. */
 	UFUNCTION(BlueprintPure, Category = Stats)

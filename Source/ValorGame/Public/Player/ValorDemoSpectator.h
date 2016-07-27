@@ -11,9 +11,23 @@ class AValorDemoSpectator : public APlayerController
 
 public:
 
+	//virtual void PreInitializeComponents() override;
+
+	//virtual void PostInitializeComponents() override;
+
+	//virtual void BeginPlay() override;
+
+	//virtual void EndPlay(const EEndPlayReason::Type EndPlayReason) override;
+
+	//virtual void Tick(float DeltaSeconds) override;
+
 	virtual void SetupInputComponent() override;
+
 	virtual void SetPlayer(UPlayer* Player) override;
+
 	virtual void Destroyed() override;
+
+public:
 
 	void OnToggleMenuPressed();
 	void OnIncreasePlaybackSpeedPressed();

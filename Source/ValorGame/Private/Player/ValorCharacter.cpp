@@ -78,16 +78,15 @@ void AValorCharacter::PostInitializeComponents()
 	}
 }
 
-void AValorCharacter::PossessedBy(AController* Controller)
+void AValorCharacter::EndPlay(const EEndPlayReason::Type EndPlayReason)
 {
-	Super::PossessedBy(Controller);
+	Super::EndPlay(EndPlayReason);
+
+	GetWorld()->GetTimerManager().ClearTimer(TimerHandle_StatRecovery);
 }
 
-PRAGMA_DISABLE_OPTIMIZATION
-void AValorCharacter::BeginPlay()
+void AValorCharacter::InitStats()
 {
-	Super::BeginPlay();
-
 	if (HasAuthority())
 	{
 		const AValorPlayerState* MyPlayerState = Cast<AValorPlayerState>(PlayerState);
@@ -187,12 +186,6 @@ void AValorCharacter::BeginPlay()
 
 		}
 	}
-}
-PRAGMA_ENABLE_OPTIMIZATION
-
-void AValorCharacter::Tick(float DeltaSeconds)
-{
-	Super::Tick(DeltaSeconds);
 }
 
 void AValorCharacter::RecoverStats()

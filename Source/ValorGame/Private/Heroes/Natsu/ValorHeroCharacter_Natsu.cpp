@@ -8,18 +8,3 @@ AValorHeroCharacter_Natsu::AValorHeroCharacter_Natsu(const FObjectInitializer& O
 	: Super(ObjectInitializer)
 {
 }
-
-void AValorHeroCharacter_Natsu::PostInitializeComponents()
-{
-	Super::PostInitializeComponents();
-}
-
-void AValorHeroCharacter_Natsu::BeginPlay()
-{
-	Super::BeginPlay();
-}
-
-void AValorHeroCharacter_Natsu::Tick(float DeltaSeconds)
-{
-	Super::Tick(DeltaSeconds);
-}

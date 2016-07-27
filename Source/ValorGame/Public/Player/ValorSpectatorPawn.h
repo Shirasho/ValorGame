@@ -11,6 +11,16 @@ class AValorSpectatorPawn : public ASpectatorPawn
 
 public:
 
+	//virtual void PreInitializeComponents() override;
+
+	//virtual void PostInitializeComponents() override;
+
+	//virtual void BeginPlay() override;
+
+	//virtual void EndPlay(const EEndPlayReason::Type EndPlayReason) override;
+
+	//virtual void Tick(float DeltaSeconds) override;
+
     virtual void SetupPlayerInputComponent(class UInputComponent* InputComponent) override;
 
 protected:

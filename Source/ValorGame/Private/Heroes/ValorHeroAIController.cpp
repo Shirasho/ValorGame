@@ -7,10 +7,3 @@ AValorHeroAIController::AValorHeroAIController(const FObjectInitializer& ObjectI
 	: Super(ObjectInitializer)
 {
 }
-
-void AValorHeroAIController::PostInitializeComponents()
-{
-	bWantsPlayerState = true;
-
-	Super::PostInitializeComponents();
-}

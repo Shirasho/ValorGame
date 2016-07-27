@@ -2,14 +2,19 @@
 
 #pragma once
 
-#include "ValorGameState.h"
-#include "ValorGameState_Classic.generated.h"
+#include "Engine/LevelScriptActor.h"
+#include "ValorLevelScriptActor.generated.h"
 
-
+/* An extended version of a Level Blueprint. */
 UCLASS()
-class AValorGameState_Classic : public AValorGameState
+class AValorLevelScriptActor : public ALevelScriptActor
 {
 	GENERATED_UCLASS_BODY()
+
+public:
+
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = ValorLevel)
+		FName ValorLevelName;
 
 public:
 

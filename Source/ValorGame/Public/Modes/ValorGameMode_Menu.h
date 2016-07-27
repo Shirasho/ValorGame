@@ -11,6 +11,16 @@ class AValorGameMode_Menu : public AGameMode
 
 public:
 
+	//virtual void PreInitializeComponents() override;
+
+	//virtual void PostInitializeComponents() override;
+
+	//virtual void BeginPlay() override;
+
+	//virtual void EndPlay(const EEndPlayReason::Type EndPlayReason) override;
+
+	//virtual void Tick(float DeltaSeconds) override;
+
 	/* Override with empty method. The menu does not require a player restart. */
 	virtual void RestartPlayer(class AController* NewPlayer) override;
 

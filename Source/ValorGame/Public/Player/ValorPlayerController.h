@@ -13,16 +13,10 @@ class AValorPlayerController : public APlayerController
 
 protected:
 
-	/* The UValorUserWidget to use as the main GUI. */
-	class UValorUserWidget* MainUserInterface;
+	/* The UValorMainInterfaceWidget to use as the main GUI. */
+	class UValorMainInterfaceWidget* MainUserInterface;
 
 private:
-
-	/* Since proxy character possession happens on BeginPlay() there
-	 * is no guarantee that ValorPlayerController::BeginPlay() will be
-	 * called after the proxy character is ready. A workaround to this
-	 * is to perform these calls in the first Tick() frame. */
-	bool bFirstTick;
 
 	/* Timer used to keep attempting to start an online game until it works. */
 	FTimerHandle TimerHandle_ClientStartOnlineGame;
@@ -30,15 +24,26 @@ private:
 	/* Timer used for movement when holding the action button down. */
 	FTimerHandle TimerHandle_MoveToCursor;
 
-protected:
+	/* Timer used for init-ing GUI at start. Since proxy character 
+	 * possession happens on BeginPlay() there is no guarantee that 
+	 * ValorPlayerController::BeginPlay() will be called after the proxy 
+	 * character is ready. In this case we just set a timer that goes
+	 * until the ProxyCharacter is valid. */
+	FTimerHandle TimerHandle_InitUserProperties;
 
-    virtual void SetupInputComponent() override;
+public:
+
+	//virtual void PreInitializeComponents() override;
 
 	virtual void PostInitializeComponents() override;
 
 	virtual void BeginPlay() override;
 
+	virtual void EndPlay(const EEndPlayReason::Type EndPlayReason) override;
+
 	virtual void Tick(float DeltaSeconds) override;
+
+    virtual void SetupInputComponent() override;
 
 public:
 
@@ -141,6 +146,9 @@ public:
     void OnCameraCenterPressed();
 
 	UFUNCTION(BlueprintCallable, Category = Input)
+	void OnCameraCenterReleased();
+
+	UFUNCTION(BlueprintCallable, Category = Input)
     void OnCameraPanLeftPressed();
 
 	UFUNCTION(BlueprintCallable, Category = Input)
@@ -187,4 +195,14 @@ public:
 
 	UFUNCTION(BlueprintCallable, Category = Input)
     void OnPushToTalkReleased();
+
+private:
+
+	void OnWindowReceivedFocus();
+
+	/* Needed to ensure the PlayerProxy is created. */
+	void ValorInitCharacter();
+
+	UFUNCTION(Client, Reliable)
+	void ClientValorInitUserInterface();
 };

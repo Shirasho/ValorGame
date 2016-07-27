@@ -2,14 +2,12 @@
 
 #pragma once
 
-#include "ValorGameState.h"
-#include "ValorGameState_Classic.generated.h"
-
+#include "ValorHUD.generated.h"
 
 UCLASS()
-class AValorGameState_Classic : public AValorGameState
+class AValorHUD : public AHUD
 {
-	GENERATED_UCLASS_BODY()
+    GENERATED_UCLASS_BODY()
 
 public:
 

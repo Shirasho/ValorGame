@@ -2,7 +2,7 @@
 
 #pragma once
 
-#include "ValorUserWidget.h"
+#include "ValorMainInterfaceWidget.h"
 #include "ValorHeroInitializationProperties.generated.h"
 
 USTRUCT(BlueprintType)
@@ -12,9 +12,9 @@ struct FValorHeroInitializationProperties
 
 public:
 
-	/* The UValorUserWidget class to use as the main user interface. */
+	/* The UValorMainInterfaceWidget class to use as the main user interface. */
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Visuals|GUI")
-	TSubclassOf<UValorUserWidget> MainUserInterface;
+	TSubclassOf<UValorMainInterfaceWidget> MainUserInterface;
 
 	/* A decal that projects to the cursor location. */
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Visuals|Cursor")

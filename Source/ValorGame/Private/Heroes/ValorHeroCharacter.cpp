@@ -26,11 +26,6 @@ AValorHeroCharacter::AValorHeroCharacter(const FObjectInitializer& ObjectInitial
 	}
 }
 
-void AValorHeroCharacter::PostInitializeComponents()
-{
-	Super::PostInitializeComponents();
-}
-
 void AValorHeroCharacter::BeginPlay()
 {
 	Super::BeginPlay();
@@ -55,11 +50,6 @@ void AValorHeroCharacter::BeginPlay()
 			UGameplayStatics::PlaySoundAtLocation(this, CharacterDefaults.SpawnSoundCue, GetActorLocation());
 		}
 	}
-}
-
-void AValorHeroCharacter::Tick(float DeltaSeconds)
-{
-	Super::Tick(DeltaSeconds);
 }
 
 void AValorHeroCharacter::GetLifetimeReplicatedProps(TArray< FLifetimeProperty > & OutLifetimeProps) const

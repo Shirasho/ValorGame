@@ -10,3 +10,9 @@ UValorGameViewportClient::UValorGameViewportClient(const FObjectInitializer& Obj
     // the screen that displays when the game is transitioning.
     SetSuppressTransitionMessage(true);
 }
+
+void UValorGameViewportClient::ReceivedFocus(FViewport* InViewport)
+{
+	Super::ReceivedFocus(InViewport);
+	OnReceivedFocusEvent.Broadcast();
+}

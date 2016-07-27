@@ -34,22 +34,42 @@ protected:
 	/* The AI Controller that will auto-navigate the player. */
 	class AValorHeroAIController* CharacterAI;
 
+private:
+
+	// Camera tracking.
+	bool bCenterCamera;
+
 public:
+
+	//virtual void PreInitializeComponents() override;
+
+	virtual void PostInitializeComponents() override;
 
 	virtual void BeginPlay() override;
 
-	virtual void PostInitializeComponents() override;
+	//virtual void EndPlay(const EEndPlayReason::Type EndPlayReason) override;
 
 	virtual void Tick(float DeltaSeconds) override;
 
 public:
 
-	/* Called when the player has clicked a valid movement location after the
-	 * request has been sent to the server. */
-	void OnCharacterMovement();
+	/* [Client -> Server] Syncs the player state and initializes the proxy character AI. */
+	UFUNCTION(Server, Reliable, WithValidation)
+	void ServerCreatePlayer(/*const APlayerState* ControllerPlayerState*/);
 
 	/* Used by the AIController to move. */
 	void MoveToLocation(const class AValorPlayerController* InController, const FVector& Location);
+
+public: // PreServer
+
+	void OnCameraCenterPressed();
+	void OnCameraCenterReleased();
+
+public: // PostServer
+
+	/* Called when the player has clicked a valid movement location after the
+	* request has been sent to the server. */
+	void OnCharacterMovement();
 
 protected:
 

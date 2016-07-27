@@ -3,6 +3,8 @@
 #include "ValorGame.h"
 #include "ValorPlayerController.h"
 
+#include "ValorGameViewportClient.h"
+
 #include "ValorPlayerCameraManager.h"
 #include "ValorCheatManager.h"
 
@@ -10,7 +12,6 @@
 
 #include "ValorHeroCharacter.h"
 #include "ValorHeroCharacterProxy.h"
-
 
 
 AValorPlayerController::AValorPlayerController(const FObjectInitializer& ObjectInitializer)
@@ -22,8 +23,6 @@ AValorPlayerController::AValorPlayerController(const FObjectInitializer& ObjectI
 	PlayerCameraManagerClass = AValorPlayerCameraManager::StaticClass();
 	CheatClass = UValorCheatManager::StaticClass();
 
-	bFirstTick = true;
-
 	bReplicates = true;
 }
 
@@ -32,34 +31,48 @@ void AValorPlayerController::PostInitializeComponents()
 	Super::PostInitializeComponents();
 }
 
+void AValorPlayerController::Tick(float DeltaTime)
+{
+	Super::Tick(DeltaTime);
+
+	//@NOTE - We need this due to (UE-22128).
+	OnWindowReceivedFocus();
+}
+
 void AValorPlayerController::BeginPlay()
 {
 	Super::BeginPlay();
-}
 
-void AValorPlayerController::Tick(float DeltaSeconds)
-{
-	Super::Tick(DeltaSeconds);
-
-	if (bFirstTick)
+	const ULocalPlayer* LocalPlayer = Cast<ULocalPlayer>(Player);
+	if (LocalPlayer)
 	{
-		bFirstTick = false;
-
-		if (GetNetMode() != NM_DedicatedServer)
+		UValorGameViewportClient* GameViewportClient = Cast<UValorGameViewportClient>(LocalPlayer->ViewportClient);
+		if (GameViewportClient)
 		{
-			const AValorHeroCharacter* PlayerCharacter = GetValorHeroCharacter();
-			if (PlayerCharacter && PlayerCharacter->GetValorHeroInitilizationProperties().MainUserInterface)
-			{
-				MainUserInterface = CreateWidget<UValorUserWidget>(this, PlayerCharacter->GetValorHeroInitilizationProperties().MainUserInterface);
-				FInputModeGameAndUI Mode;
-				//Mode.SetWidgetToFocus(MainUserInterface->GetCachedWidget());
-				Mode.SetLockMouseToViewport(true);
-				Mode.SetHideCursorDuringCapture(false);
-				SetInputMode(Mode);
-				MainUserInterface->AddToViewport(9999);
-			}
+			GameViewportClient->OnReceivedFocus().AddUObject(this, &AValorPlayerController::OnWindowReceivedFocus);
 		}
 	}
+
+	if (HasAuthority())
+	{
+		ValorInitCharacter();
+	}
+}
+
+void AValorPlayerController::OnWindowReceivedFocus()
+{
+	FInputModeGameAndUI Mode;
+	Mode.SetLockMouseToViewport(true);
+	Mode.SetHideCursorDuringCapture(false);
+	SetInputMode(Mode);
+}
+
+void AValorPlayerController::EndPlay(const EEndPlayReason::Type EndPlayReason)
+{
+	Super::EndPlay(EndPlayReason);
+
+	GetWorld()->GetTimerManager().ClearTimer(TimerHandle_MoveToCursor);
+	GetWorld()->GetTimerManager().ClearTimer(TimerHandle_InitUserProperties);
 }
 
 void AValorPlayerController::SetupInputComponent()
@@ -125,6 +138,7 @@ void AValorPlayerController::SetupInputComponent()
 
     /* OnCameraCenter */
     InputComponent->BindAction("CameraCenter", IE_Pressed, this, &AValorPlayerController::OnCameraCenterPressed);
+	InputComponent->BindAction("CameraCenter", IE_Released, this, &AValorPlayerController::OnCameraCenterReleased);
 
     /* OnMenu */
     InputComponent->BindAction("ToggleMenu", IE_Pressed, this, &AValorPlayerController::OnToggleMenuPressed);
@@ -152,11 +166,56 @@ AValorHeroCharacter* AValorPlayerController::GetValorHeroCharacter() const
 	return nullptr;
 }
 
+void AValorPlayerController::ValorInitCharacter()
+{
+	if (HasAuthority() && !GetValorHeroCharacter())
+	{
+		AValorHeroCharacterProxy* ValorHeroCharacterProxy = GetValorHeroCharacterProxy();
+		if (ValorHeroCharacterProxy)
+		{
+			ValorHeroCharacterProxy->ServerCreatePlayer(/*PlayerState*/);
+			ClientValorInitUserInterface();
+		}
+		else
+		{
+			GetWorld()->GetTimerManager().SetTimer(TimerHandle_InitUserProperties, this, &AValorPlayerController::ValorInitCharacter, 0.025f, false);
+		}
+	}
+}
+
+void AValorPlayerController::ClientValorInitUserInterface_Implementation()
+{
+	if (IsLocalController())
+	{
+		const AValorHeroCharacter* PlayerCharacter = GetValorHeroCharacter();
+		if (PlayerCharacter && PlayerCharacter->GetValorHeroInitilizationProperties().MainUserInterface)
+		{
+			MainUserInterface = CreateWidget<UValorMainInterfaceWidget>(this, PlayerCharacter->GetValorHeroInitilizationProperties().MainUserInterface);
+			FInputModeGameAndUI Mode;
+			Mode.SetLockMouseToViewport(true);
+			Mode.SetHideCursorDuringCapture(false);
+			SetInputMode(Mode);
+			MainUserInterface->AddToViewport(9999);
+		}
+		// Keep attempting until the hero character is valid.
+		else
+		{
+			GetWorld()->GetTimerManager().SetTimer(TimerHandle_InitUserProperties, this, &AValorPlayerController::ClientValorInitUserInterface_Implementation, 0.025f, false);
+		}
+	}
+}
+
+
 void AValorPlayerController::OnPrimaryAction1Pressed()
 {
-	//FString Message = FString::Printf(TEXT("Player health: %f"), GetValorHeroCharacter()->GetHealth());
-	//VALOR_LOGF(Message);
-	VALOR_LOG("Player health: %f", GetValorHeroCharacter()->GetBaseHealth());
+	const ULocalPlayer* LocalPlayer = Cast<ULocalPlayer>(Player);
+	if (LocalPlayer && (LocalPlayer->ViewportClient->Viewport && LocalPlayer->ViewportClient->Viewport->IsForegroundWindow()))
+	{
+		if (GetValorHeroCharacter())
+		{
+			VALOR_LOG("Replication test - Player health: %f", GetValorHeroCharacter()->GetBaseHealth());
+		}
+	}
 }
 
 void AValorPlayerController::OnPrimaryAction1Released()
@@ -166,28 +225,35 @@ void AValorPlayerController::OnPrimaryAction1Released()
 
 void AValorPlayerController::OnPrimaryAction2Pressed()
 {
+	const ULocalPlayer* LocalPlayer = Cast<ULocalPlayer>(Player);
+	if (LocalPlayer && (LocalPlayer->ViewportClient->Viewport && LocalPlayer->ViewportClient->Viewport->IsForegroundWindow()))
+	{
 	/* There would be more tests here. For prototyping
 	* we are simply going to move a character. */
-	
+
 	// Trace to see what is under the mouse cursor
-	FHitResult Hit;
-	GetHitResultUnderCursor(ECC_Visibility, false, Hit);
+		FHitResult Hit;
+		GetHitResultUnderCursor(ECC_Visibility, false, Hit);
 
-	if (Hit.bBlockingHit)
-	{
-		ServerMoveToCursor(Hit);
-
-		if (GetValorHeroCharacterProxy())
+		if (Hit.bBlockingHit)
 		{
-			GetValorHeroCharacterProxy()->OnCharacterMovement();
-		}
+			ServerMoveToCursor(Hit);
 
-		GetWorld()->GetTimerManager().SetTimer(TimerHandle_MoveToCursor, this, &AValorPlayerController::OnPrimaryAction2Pressed, GetWorldSettings()->GetEffectiveTimeDilation() * 0.45f, false);
+			if (GetValorHeroCharacterProxy())
+			{
+				GetValorHeroCharacterProxy()->OnCharacterMovement();
+			}
+
+			GetWorld()->GetTimerManager().SetTimer(TimerHandle_MoveToCursor, this, &AValorPlayerController::OnPrimaryAction2Pressed, GetWorldSettings()->GetEffectiveTimeDilation() * 0.45f, false);
+		}
 	}
 }
 
 void AValorPlayerController::OnPrimaryAction2Released()
 {
+	// We want releases to trigger even when the window loses focus
+	// in order to prevent automation.
+
 	// If the timer is set between movement polling intervals, clear it.
 	GetWorld()->GetTimerManager().ClearTimer(TimerHandle_MoveToCursor);
 	//TimerHandle_MoveToCursor.MakeValid();
@@ -195,7 +261,11 @@ void AValorPlayerController::OnPrimaryAction2Released()
 
 void AValorPlayerController::OnAbilityAction1Pressed()
 {
-	VALOR_LOG("AbilityAction1Pressed()");
+	const ULocalPlayer* LocalPlayer = Cast<ULocalPlayer>(Player);
+	if (LocalPlayer && (LocalPlayer->ViewportClient->Viewport && LocalPlayer->ViewportClient->Viewport->IsForegroundWindow()))
+	{
+		VALOR_LOG("UI Test - AbilityAction1 pressed. ");
+	}
 }
 
 void AValorPlayerController::OnAbilityAction1Released()
@@ -205,7 +275,11 @@ void AValorPlayerController::OnAbilityAction1Released()
 
 void AValorPlayerController::OnAbilityAction2Pressed()
 {
-
+	const ULocalPlayer* LocalPlayer = Cast<ULocalPlayer>(Player);
+	if (LocalPlayer && (LocalPlayer->ViewportClient->Viewport && LocalPlayer->ViewportClient->Viewport->IsForegroundWindow()))
+	{
+		VALOR_LOG("UI Test - AbilityAction2 pressed. ");
+	}
 }
 
 void AValorPlayerController::OnAbilityAction2Released()
@@ -215,7 +289,11 @@ void AValorPlayerController::OnAbilityAction2Released()
 
 void AValorPlayerController::OnAbilityAction3Pressed()
 {
+	const ULocalPlayer* LocalPlayer = Cast<ULocalPlayer>(Player);
+	if (LocalPlayer && (LocalPlayer->ViewportClient->Viewport && LocalPlayer->ViewportClient->Viewport->IsForegroundWindow()))
+	{
 
+	}
 }
 
 void AValorPlayerController::OnAbilityAction3Released()
@@ -225,7 +303,11 @@ void AValorPlayerController::OnAbilityAction3Released()
 
 void AValorPlayerController::OnAbilityAction4Pressed()
 {
+	const ULocalPlayer* LocalPlayer = Cast<ULocalPlayer>(Player);
+	if (LocalPlayer && (LocalPlayer->ViewportClient->Viewport && LocalPlayer->ViewportClient->Viewport->IsForegroundWindow()))
+	{
 
+	}
 }
 
 void AValorPlayerController::OnAbilityAction4Released()
@@ -235,7 +317,11 @@ void AValorPlayerController::OnAbilityAction4Released()
 
 void AValorPlayerController::OnAbilitySpell1Pressed()
 {
+	const ULocalPlayer* LocalPlayer = Cast<ULocalPlayer>(Player);
+	if (LocalPlayer && (LocalPlayer->ViewportClient->Viewport && LocalPlayer->ViewportClient->Viewport->IsForegroundWindow()))
+	{
 
+	}
 }
 
 void AValorPlayerController::OnAbilitySpell1Released()
@@ -245,7 +331,11 @@ void AValorPlayerController::OnAbilitySpell1Released()
 
 void AValorPlayerController::OnAbilitySpell2Pressed()
 {
+	const ULocalPlayer* LocalPlayer = Cast<ULocalPlayer>(Player);
+	if (LocalPlayer && (LocalPlayer->ViewportClient->Viewport && LocalPlayer->ViewportClient->Viewport->IsForegroundWindow()))
+	{
 
+	}
 }
 
 void AValorPlayerController::OnAbilitySpell2Released()
@@ -255,113 +345,216 @@ void AValorPlayerController::OnAbilitySpell2Released()
 
 void AValorPlayerController::OnUseItem1Pressed()
 {
+	const ULocalPlayer* LocalPlayer = Cast<ULocalPlayer>(Player);
+	if (LocalPlayer && (LocalPlayer->ViewportClient->Viewport && LocalPlayer->ViewportClient->Viewport->IsForegroundWindow()))
+	{
 
+	}
 }
 
 void AValorPlayerController::OnUseItem2Pressed()
 {
+	const ULocalPlayer* LocalPlayer = Cast<ULocalPlayer>(Player);
+	if (LocalPlayer && (LocalPlayer->ViewportClient->Viewport && LocalPlayer->ViewportClient->Viewport->IsForegroundWindow()))
+	{
 
+	}
 }
 
 void AValorPlayerController::OnUseItem3Pressed()
 {
+	const ULocalPlayer* LocalPlayer = Cast<ULocalPlayer>(Player);
+	if (LocalPlayer && (LocalPlayer->ViewportClient->Viewport && LocalPlayer->ViewportClient->Viewport->IsForegroundWindow()))
+	{
 
+	}
 }
 
 
 void AValorPlayerController::OnCameraZoomInPressed()
 {
+	const ULocalPlayer* LocalPlayer = Cast<ULocalPlayer>(Player);
+	if (LocalPlayer && (LocalPlayer->ViewportClient->Viewport && LocalPlayer->ViewportClient->Viewport->IsForegroundWindow()))
+	{
 
+	}
 }
 
 void AValorPlayerController::OnCameraZoomOutPressed()
 {
+	const ULocalPlayer* LocalPlayer = Cast<ULocalPlayer>(Player);
+	if (LocalPlayer && (LocalPlayer->ViewportClient->Viewport && LocalPlayer->ViewportClient->Viewport->IsForegroundWindow()))
+	{
 
+	}
 }
 
 void AValorPlayerController::OnCameraCenterPressed()
 {
+	const ULocalPlayer* LocalPlayer = Cast<ULocalPlayer>(Player);
+	if (LocalPlayer && (LocalPlayer->ViewportClient->Viewport && LocalPlayer->ViewportClient->Viewport->IsForegroundWindow()))
+	{
+		if (GetValorHeroCharacterProxy())
+		{
+			GetValorHeroCharacterProxy()->OnCameraCenterPressed();
+		}
+	}
+}
 
+void AValorPlayerController::OnCameraCenterReleased()
+{
+	const ULocalPlayer* LocalPlayer = Cast<ULocalPlayer>(Player);
+	if (LocalPlayer && (LocalPlayer->ViewportClient->Viewport && LocalPlayer->ViewportClient->Viewport->IsForegroundWindow()))
+	{
+		if (GetValorHeroCharacterProxy())
+		{
+			GetValorHeroCharacterProxy()->OnCameraCenterReleased();
+		}
+	}
 }
 
 void AValorPlayerController::OnCameraPanPrecise1Pressed()
 {
+	const ULocalPlayer* LocalPlayer = Cast<ULocalPlayer>(Player);
+	if (LocalPlayer && (LocalPlayer->ViewportClient->Viewport && LocalPlayer->ViewportClient->Viewport->IsForegroundWindow()))
+	{
 
+	}
 }
 
 void AValorPlayerController::OnCameraPanPrecise2Pressed()
 {
+	const ULocalPlayer* LocalPlayer = Cast<ULocalPlayer>(Player);
+	if (LocalPlayer && (LocalPlayer->ViewportClient->Viewport && LocalPlayer->ViewportClient->Viewport->IsForegroundWindow()))
+	{
 
+	}
 }
 
 void AValorPlayerController::OnCameraPanPrecise3Pressed()
 {
+	const ULocalPlayer* LocalPlayer = Cast<ULocalPlayer>(Player);
+	if (LocalPlayer && (LocalPlayer->ViewportClient->Viewport && LocalPlayer->ViewportClient->Viewport->IsForegroundWindow()))
+	{
 
+	}
 }
 
 void AValorPlayerController::OnCameraPanPrecise4Pressed()
 {
+	const ULocalPlayer* LocalPlayer = Cast<ULocalPlayer>(Player);
+	if (LocalPlayer && (LocalPlayer->ViewportClient->Viewport && LocalPlayer->ViewportClient->Viewport->IsForegroundWindow()))
+	{
 
+	}
 }
 
 void AValorPlayerController::OnCameraPanLeftPressed()
 {
+	const ULocalPlayer* LocalPlayer = Cast<ULocalPlayer>(Player);
+	if (LocalPlayer && (LocalPlayer->ViewportClient->Viewport && LocalPlayer->ViewportClient->Viewport->IsForegroundWindow()))
+	{
 
+	}
 }
 
 void AValorPlayerController::OnCameraPanLeftReleased()
 {
+	const ULocalPlayer* LocalPlayer = Cast<ULocalPlayer>(Player);
+	if (LocalPlayer && (LocalPlayer->ViewportClient->Viewport && LocalPlayer->ViewportClient->Viewport->IsForegroundWindow()))
+	{
 
+	}
 }
 
 void AValorPlayerController::OnCameraPanRightPressed()
 {
+	const ULocalPlayer* LocalPlayer = Cast<ULocalPlayer>(Player);
+	if (LocalPlayer && (LocalPlayer->ViewportClient->Viewport && LocalPlayer->ViewportClient->Viewport->IsForegroundWindow()))
+	{
 
+	}
 }
 
 void AValorPlayerController::OnCameraPanRightReleased()
 {
+	const ULocalPlayer* LocalPlayer = Cast<ULocalPlayer>(Player);
+	if (LocalPlayer && (LocalPlayer->ViewportClient->Viewport && LocalPlayer->ViewportClient->Viewport->IsForegroundWindow()))
+	{
 
+	}
 }
 
 void AValorPlayerController::OnCameraPanUpPressed()
 {
+	const ULocalPlayer* LocalPlayer = Cast<ULocalPlayer>(Player);
+	if (LocalPlayer && (LocalPlayer->ViewportClient->Viewport && LocalPlayer->ViewportClient->Viewport->IsForegroundWindow()))
+	{
 
+	}
 }
 
 void AValorPlayerController::OnCameraPanUpReleased()
 {
+	const ULocalPlayer* LocalPlayer = Cast<ULocalPlayer>(Player);
+	if (LocalPlayer && (LocalPlayer->ViewportClient->Viewport && LocalPlayer->ViewportClient->Viewport->IsForegroundWindow()))
+	{
 
+	}
 }
 
 void AValorPlayerController::OnCameraPanDownPressed()
 {
+	const ULocalPlayer* LocalPlayer = Cast<ULocalPlayer>(Player);
+	if (LocalPlayer && (LocalPlayer->ViewportClient->Viewport && LocalPlayer->ViewportClient->Viewport->IsForegroundWindow()))
+	{
 
+	}
 }
 
 void AValorPlayerController::OnCameraPanDownReleased()
 {
+	const ULocalPlayer* LocalPlayer = Cast<ULocalPlayer>(Player);
+	if (LocalPlayer && (LocalPlayer->ViewportClient->Viewport && LocalPlayer->ViewportClient->Viewport->IsForegroundWindow()))
+	{
 
+	}
 }
 
 void AValorPlayerController::OnToggleMenuPressed()
 {
+	const ULocalPlayer* LocalPlayer = Cast<ULocalPlayer>(Player);
+	if (LocalPlayer && (LocalPlayer->ViewportClient->Viewport && LocalPlayer->ViewportClient->Viewport->IsForegroundWindow()))
+	{
 
+	}
 }
 
 void AValorPlayerController::OnToggleScoreboardPressed()
 {
+	const ULocalPlayer* LocalPlayer = Cast<ULocalPlayer>(Player);
+	if (LocalPlayer && (LocalPlayer->ViewportClient->Viewport && LocalPlayer->ViewportClient->Viewport->IsForegroundWindow()))
+	{
 
+	}
 }
 
 void AValorPlayerController::OnPushToTalkPressed()
 {
+	const ULocalPlayer* LocalPlayer = Cast<ULocalPlayer>(Player);
+	if (LocalPlayer && (LocalPlayer->ViewportClient->Viewport && LocalPlayer->ViewportClient->Viewport->IsForegroundWindow()))
+	{
 
+	}
 }
 
 void AValorPlayerController::OnPushToTalkReleased()
 {
+	const ULocalPlayer* LocalPlayer = Cast<ULocalPlayer>(Player);
+	if (LocalPlayer && (LocalPlayer->ViewportClient->Viewport && LocalPlayer->ViewportClient->Viewport->IsForegroundWindow()))
+	{
 
+	}
 }
 
 void AValorPlayerController::ClientStartOnlineMatch_Implementation()
