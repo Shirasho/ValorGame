@@ -376,7 +376,11 @@ void AValorPlayerController::OnCameraZoomInPressed()
 	const ULocalPlayer* LocalPlayer = Cast<ULocalPlayer>(Player);
 	if (LocalPlayer && (LocalPlayer->ViewportClient->Viewport && LocalPlayer->ViewportClient->Viewport->IsForegroundWindow()))
 	{
-
+		if (GetValorHeroCharacterProxy())
+		{
+			float CurrentOrthoWidth = GetValorHeroCharacterProxy()->GetCameraComponent()->OrthoWidth;
+			GetValorHeroCharacterProxy()->GetCameraComponent()->SetOrthoWidth(FMath::Clamp(CurrentOrthoWidth - VALOR_CAMERA_ORTHO_WIDTH_SCROLL, VALOR_CAMERA_ORTHO_WIDTH_MIN, VALOR_CAMERA_ORTHO_WIDTH_MAX));
+		}
 	}
 }
 
@@ -385,7 +389,11 @@ void AValorPlayerController::OnCameraZoomOutPressed()
 	const ULocalPlayer* LocalPlayer = Cast<ULocalPlayer>(Player);
 	if (LocalPlayer && (LocalPlayer->ViewportClient->Viewport && LocalPlayer->ViewportClient->Viewport->IsForegroundWindow()))
 	{
-
+		if (GetValorHeroCharacterProxy())
+		{
+			float CurrentOrthoWidth = GetValorHeroCharacterProxy()->GetCameraComponent()->OrthoWidth;
+			GetValorHeroCharacterProxy()->GetCameraComponent()->SetOrthoWidth(FMath::Clamp(CurrentOrthoWidth + VALOR_CAMERA_ORTHO_WIDTH_SCROLL, VALOR_CAMERA_ORTHO_WIDTH_MIN, VALOR_CAMERA_ORTHO_WIDTH_MAX));
+		}
 	}
 }
 

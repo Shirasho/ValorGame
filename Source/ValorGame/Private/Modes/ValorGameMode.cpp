@@ -12,9 +12,11 @@
 #include "ValorDemoSpectator.h"
 
 #include "ValorPlayerStart.h"
-#include "ValorAIController.h"
-#include "ValorAIHeroController.h"
-#include "ValorAIMinionController.h"
+#include "ValorLaneSpawner.h"
+#include "ValorJungleSpawner.h"
+
+#include "ValorHeroController.h"
+#include "ValorHeroCharacter.h"
 
 #include "ValorHeroCharacterProxy.h"
 
@@ -22,15 +24,6 @@
 AValorGameMode::AValorGameMode(const FObjectInitializer& ObjectInitializer) 
 	: Super(ObjectInitializer)
 {
-	/*static ConstructorHelpers::FClassFinder<APawn> CH_PlayerPawn(TEXT("/Game/Blueprints/Heros/Natsu_BP"));
-	if (CH_PlayerPawn.Class)
-	{
-		DefaultPawnClass = CH_PlayerPawn.Class;
-	}*/
-
-	/*static ConstructorHelpers::FClassFinder<APawn> BotPawnOb(TEXT("/Game/Blueprints/Pawns/BotPawn"));
-	DefaultAIPawnClass = BotPawnOb.Class;*/
-
 	DefaultPawnClass = AValorHeroCharacterProxy::StaticClass();
 	PlayerControllerClass = AValorPlayerController::StaticClass();
 
@@ -105,65 +98,22 @@ AActor* AValorGameMode::ChoosePlayerStart_Implementation(AController* Player)
 
 UClass* AValorGameMode::GetDefaultPawnClassForController_Implementation(AController* InController)
 {
-	AValorAIController* ValorAIController = Cast<AValorAIController>(InController);
-	if (ValorAIController)
-	{
-		if (ValorAIController->IsA<AValorAIHeroController>())
-		{
-			return DefaultAIPawnClass;
-		}
-		else if (ValorAIController->IsA <AValorAIMinionController>())
-		{
-			if (ValorAIController->GetValorAICharacter()->GetTeam() == EValorTeam::One)
-			{
-				return TeamOneMinionClass;
-			}
-			else if (ValorAIController->GetValorAICharacter()->GetTeam() == EValorTeam::Two)
-			{
-				return TeamTwoMinionClass;
-			}
-			else if (ValorAIController->GetValorAICharacter()->GetTeam() == EValorTeam::Three)
-			{
-				return TeamThreeMinionClass;
-			}
-			else if (ValorAIController->GetValorAICharacter()->GetTeam() == EValorTeam::Four)
-			{
-				return TeamFourMinionClass;
-			}
-			else
-			{
-				return DefaultAIPawnClass;
-			}
-		}
-	}
-
 	return Super::GetDefaultPawnClassForController_Implementation(InController);
 }
 
 bool AValorGameMode::IsPlayerStartAllowed(APlayerStart* SpawnPoint, AController* Player) const
 {
-	const AValorPlayerStart* ValorSpawnPoint = Cast<AValorPlayerStart>(SpawnPoint);
-	if (ValorSpawnPoint)
+	const AValorPlayerStart* ValorPlayerStart = Cast<AValorPlayerStart>(SpawnPoint);
+	if (ValorPlayerStart)
 	{
-		const AValorAIController* ValorAIController = Cast<AValorAIController>(Player);
+		const AValorHeroController* ValorHeroController = Cast<AValorHeroController>(Player);
 
-		/* Since PlayerControllers are proxy controllers they do not require a spawn point.
-		 * That means that all spawnables should extend ValorAIController. Anything else shouldn't
-		 * be spawned. In the case of PlayerControllers they will be spawned in the middle of the map
-		 * at the only APlayerStart in the level, and the transform is handled in the ValorHeroCharacterProxy tick. */
-		if (!ValorAIController)
+		if (!ValorHeroController)
 		{
 			return false;
 		}
 
-		if (ValorAIController->IsA<AValorAIHeroController>())
-		{
-			return ValorSpawnPoint->bCanSpawnPlayers && ((static_cast<uint8>(ValorAIController->GetValorAICharacter()->GetTeam()) & ValorSpawnPoint->SpawnTeam) > 0);
-		}
-		else
-		{
-			return ValorSpawnPoint->bCanSpawnMinions && ((static_cast<uint8>(ValorAIController->GetValorAICharacter()->GetTeam()) & ValorSpawnPoint->SpawnTeam) > 0);
-		}
+		return ((static_cast<uint8>(ValorHeroController->GetValorHeroCharacter()->GetTeam()) & ValorPlayerStart->SpawnTeam) > 0);
 	}
 
 	return false;
@@ -172,10 +122,10 @@ bool AValorGameMode::IsPlayerStartAllowed(APlayerStart* SpawnPoint, AController*
 bool AValorGameMode::IsPlayerStartPreferred(APlayerStart* SpawnPoint, AController* Player) const
 {
 	ACharacter* MyPawn = Cast<ACharacter>((*DefaultPawnClass)->GetDefaultObject<ACharacter>());
-	AValorAIController* AIController = Cast<AValorAIController>(Player);
-	if (AIController)
+	AValorHeroController* ValorHeroController = Cast<AValorHeroController>(Player);
+	if (ValorHeroController)
 	{
-		MyPawn = Cast<ACharacter>(DefaultAIPawnClass->GetDefaultObject<ACharacter>());
+		MyPawn = Cast<ACharacter>(AValorHeroCharacter::StaticClass()->GetDefaultObject<ACharacter>());
 	}
 
 	if (MyPawn)
@@ -204,4 +154,41 @@ bool AValorGameMode::IsPlayerStartPreferred(APlayerStart* SpawnPoint, AControlle
 	}
 
 	return true;
+}
+
+void AValorGameMode::BeginPlay()
+{
+	Super::BeginPlay();
+
+	GetWorld()->GetTimerManager().SetTimer(TimerHandle_LaneMinion, this, &AValorGameMode::SpawnLaneMinions, GetWorld()->GetWorldSettings()->GetEffectiveTimeDilation() * LaneMinionWaveInterval, true, GetWorld()->GetWorldSettings()->GetEffectiveTimeDilation() * LaneMinionStartTime);
+	GetWorld()->GetTimerManager().SetTimer(TimerHandle_JungleMinion, this, &AValorGameMode::SpawnJungleMinions, GetWorld()->GetWorldSettings()->GetEffectiveTimeDilation() * JungleMinionStartTime, false);
+}
+
+void AValorGameMode::EndPlay(const EEndPlayReason::Type EndPlayReason)
+{
+	Super::EndPlay(EndPlayReason);
+
+	GetWorld()->GetTimerManager().ClearTimer(TimerHandle_LaneMinion);
+}
+
+void AValorGameMode::SpawnLaneMinions()
+{
+	VALOR_LOG("Spawning lane minions.");
+	UE_LOG(LogValorServer, Log, TEXT("Spawning lane minions."));
+
+	for (TActorIterator<AValorLaneSpawner> It(GetWorld()); It; ++It)
+	{
+		(*It)->SpawnUnit();
+	}
+}
+
+void AValorGameMode::SpawnJungleMinions()
+{
+	VALOR_LOG("Spawning jungle minions.");
+	UE_LOG(LogValorServer, Log, TEXT("Spawning jungle minions."));
+
+	for (TActorIterator<AValorJungleSpawner> It(GetWorld()); It; ++It)
+	{
+		(*It)->SpawnUnit();
+	}
 }

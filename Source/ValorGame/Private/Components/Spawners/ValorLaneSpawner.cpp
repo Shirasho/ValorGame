@@ -1,0 +1,49 @@
+// Copyright Shirasho Media 2016. All rights reserved.
+
+#include "ValorGame.h"
+#include "ValorLaneSpawner.h"
+
+#include "ValorLaneMinion.h"
+#include "ValorMinionController.h"
+
+AValorLaneSpawner::AValorLaneSpawner(const FObjectInitializer& ObjectInitializer)
+	: Super(ObjectInitializer)
+{
+	UnitSpawnListIndex = 0;
+}
+
+void AValorLaneSpawner::SpawnUnit()
+{
+	if (UnitSpawnListIndex < SpawnClassOrder.Num())
+	{
+		FVector Location = GetActorLocation();
+		FRotator Rotation = GetActorRotation();
+
+		FActorSpawnParameters SpawnParameters;
+		SpawnParameters.Owner = this;
+		SpawnParameters.Instigator = Instigator;
+		SpawnParameters.SpawnCollisionHandlingOverride = ESpawnActorCollisionHandlingMethod::AlwaysSpawn;
+
+		AValorLaneMinion* Minion = Cast<AValorLaneMinion>(GetWorld()->SpawnActor(SpawnClassOrder[UnitSpawnListIndex], &Location, &Rotation, SpawnParameters));
+		check(Minion);
+		Minion->SetTeam(SpawnTeam);
+
+		AValorMinionController* MinionController = GetWorld()->SpawnActor<AValorMinionController>(Location, Rotation);
+		check(MinionController);
+		MinionController->Possess(Minion);
+
+		if (ensureMsgf(Minion->BotBehavior, TEXT("Minion '%s' does not have a BehaviorTree assigned to it. Assign one in the editor."), *GetNameSafe(Minion)))
+		{
+			MinionController->GetBehaviorComponent()->StartTree(*(Minion->BotBehavior));
+		}
+
+		++UnitSpawnListIndex;
+
+		GetWorld()->GetTimerManager().SetTimer(TimerHandle_SpawnUnit, this, &AValorLaneSpawner::SpawnUnit, GetWorld()->GetWorldSettings()->GetEffectiveTimeDilation() * TimeBetweenMinions, false);
+	}
+	else
+	{
+		// Reset the list index and stop spawning.
+		UnitSpawnListIndex = 0;
+	}
+}

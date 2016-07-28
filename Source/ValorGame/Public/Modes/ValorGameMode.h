@@ -12,11 +12,19 @@ class AValorGameMode : public AGameMode
 
 protected:
 
-	TSubclassOf<APawn> DefaultAIPawnClass;
-	TSubclassOf<APawn> TeamOneMinionClass;
-	TSubclassOf<APawn> TeamTwoMinionClass;
-	TSubclassOf<APawn> TeamThreeMinionClass;
-	TSubclassOf<APawn> TeamFourMinionClass;
+	UPROPERTY(Config)
+		int32 LaneMinionStartTime;
+
+	UPROPERTY(Config)
+		int32 LaneMinionWaveInterval;
+
+	UPROPERTY(Config)
+		int32 JungleMinionStartTime;
+
+private:
+
+	FTimerHandle TimerHandle_LaneMinion;
+	FTimerHandle TimerHandle_JungleMinion;
 
 public:
 
@@ -24,9 +32,9 @@ public:
 
 	//virtual void PostInitializeComponents() override;
 
-	//virtual void BeginPlay() override;
+	virtual void BeginPlay() override;
 
-	//virtual void EndPlay(const EEndPlayReason::Type EndPlayReason) override;
+	virtual void EndPlay(const EEndPlayReason::Type EndPlayReason) override;
 
 	//virtual void Tick(float DeltaSeconds) override;
 
@@ -49,4 +57,9 @@ protected:
 
 	/* Check if player should use PlayerStart. */
 	virtual bool IsPlayerStartPreferred(APlayerStart* SpawnPoint, AController* Player) const;
+
+protected:
+
+	virtual void SpawnLaneMinions();
+	virtual void SpawnJungleMinions();
 };

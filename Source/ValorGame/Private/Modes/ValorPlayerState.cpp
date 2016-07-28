@@ -19,7 +19,7 @@ AValorPlayerState::AValorPlayerState(const FObjectInitializer& ObjectInitializer
 
 	if (HasAuthority())
 	{
-		static ConstructorHelpers::FClassFinder<AValorHeroCharacter> CH_PlayerPawn(TEXT("/Game/Heros/Natsu/Natsu_BP"));
+		static ConstructorHelpers::FClassFinder<AValorHeroCharacter> CH_PlayerPawn(TEXT("/Game/Units/Heros/Natsu/Natsu_BP"));
 		if (CH_PlayerPawn.Succeeded())
 		{
 			HeroCharacter = CH_PlayerPawn.Class;

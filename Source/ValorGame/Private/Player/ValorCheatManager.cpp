@@ -5,7 +5,7 @@
 
 #include "ValorPlayerController.h"
 #include "ValorGameMode.h"
-#include "ValorAIController.h"
+#include "ValorPlayerController.h"
 
 void UValorCheatManager::ForceMatchStart()
 {
