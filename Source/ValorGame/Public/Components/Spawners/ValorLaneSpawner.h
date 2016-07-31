@@ -5,12 +5,17 @@
 #include "ValorMinionSpawner.h"
 #include "ValorLaneSpawner.generated.h"
 
+class AValorMinionTargetPoint;
+
 UCLASS(Blueprintable, ClassGroup = Valor)
 class AValorLaneSpawner : public AValorMinionSpawner
 {
 	GENERATED_UCLASS_BODY()
 
 public:
+
+	UPROPERTY(EditInstanceOnly, BlueprintReadOnly, Category = Spawner)
+	AValorMinionTargetPoint* InitialPoint;
 
 	/* The order of minions that spawn from this spawner. */
 	UPROPERTY(EditInstanceOnly, BlueprintReadOnly, Category = Spawner)

@@ -2,20 +2,17 @@
 
 #pragma once
 
-#include "AIController.h"
+#include "ValorAIController.h"
 #include "ValorMinionController.generated.h"
 
 class AValorMinion;
 
 UCLASS(Config=Game)
-class AValorMinionController : public AAIController
+class AValorMinionController : public AValorAIController
 {
 	GENERATED_UCLASS_BODY()
 
 private:
-
-	UPROPERTY(Transient)
-	UBlackboardComponent* BlackboardComponent;
 
 	UPROPERTY(Transient)
 	UBehaviorTreeComponent* BehaviorComponent;
@@ -32,16 +29,21 @@ public:
 
 	//virtual void Tick(float DeltaSeconds) override;
 
+	//virtual void Possess(APawn* InPawn) override;
+
+	virtual bool RunBehaviorTree(UBehaviorTree* BTAsset) override;
+
 public:
 
 	AValorMinion* GetValorMinion() const;
 
-	FORCEINLINE UBlackboardComponent* GetBlackboardComponent() const 
-	{ 
-		return BlackboardComponent;
-	}
 	FORCEINLINE UBehaviorTreeComponent* GetBehaviorComponent() const
 	{ 
 		return BehaviorComponent;
+	}
+
+	FORCEINLINE UBlackboardComponent* GetBlackboardComponent() const
+	{
+		return Blackboard;
 	}
 };

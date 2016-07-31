@@ -2,13 +2,13 @@
 
 #pragma once
 
-#include "AIController.h"
+#include "ValorAIController.h"
 #include "ValorHeroController.generated.h"
 
 class AValorHeroCharacter;
 
 UCLASS(Config=Game)
-class AValorHeroController : public AAIController
+class AValorHeroController : public AValorAIController
 {
 	GENERATED_UCLASS_BODY()
 

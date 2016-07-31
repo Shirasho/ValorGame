@@ -213,7 +213,7 @@ void AValorPlayerController::OnPrimaryAction1Pressed()
 	{
 		if (GetValorHeroCharacter())
 		{
-			VALOR_LOG("Replication test - Player health: %f", GetValorHeroCharacter()->GetBaseHealth());
+			VALOR_LOG("Replication test - Player health: %f", GetValorHeroCharacter()->GetStatComponent()->GetHealth());
 		}
 	}
 }

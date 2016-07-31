@@ -36,4 +36,9 @@ public:
 	//virtual void EndPlay(const EEndPlayReason::Type EndPlayReason) override;
 
 	//virtual void Tick(float DeltaSeconds) override;
+
+public:
+
+	UFUNCTION(NetMulticast, Unreliable, Category = Sound)
+		void MulticastPlaySoundAtLocation(/*UObject* WorldContextObject, */class USoundBase* Sound, FVector Location, FRotator Rotation, float VolumeMultiplier = 1.f, float PitchMultiplier = 1.f, float StartTime = 0.f, class USoundAttenuation* AttenuationSettings = nullptr, class USoundConcurrency* ConcurrencySettings = nullptr);
 };

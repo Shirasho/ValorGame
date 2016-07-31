@@ -2,7 +2,6 @@
 
 #pragma once
 
-#include "ValorCharacterStatContainer.h"
 #include "ValorPlayerController.generated.h"
 
 UCLASS(Config = Game)

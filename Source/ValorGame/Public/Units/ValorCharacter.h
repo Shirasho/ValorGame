@@ -3,10 +3,7 @@
 #pragma once
 
 #include "ValorTypes.h"
-#include "ValorCharacterStatContainer.h"
 #include "ValorCharacter.generated.h"
-
-#define VALOR_MAX_CHARACTER_LEVEL 20
 
 UCLASS(Abstract)
 class AValorCharacter : public ACharacter
@@ -15,34 +12,21 @@ class AValorCharacter : public ACharacter
 
 protected:
 
-	/* The number of times that RecoverStats() should be called within the full duration specified by GetStatRecoveryFrequencyTime(). */
-	virtual float GetStatRecoveryFrequency() const
-	{
-		// We want to update every 1.25 seconds.
-		return 4;
-	}
-	/* The number of seconds of the full duration (i.e. 10 regen per X seconds) where X is the returned value. */
-	virtual float GetStatRecoveryFrequencyTime() const
-	{
-		// We want our recovery in units of "per 5 seconds".
-		return 5;
-	}
-
-protected:
-
 	/* The hitbox used for registering ability hits on this character. */
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, meta = (AllowPrivateAccess = "true"), Category = Character)
 	UCapsuleComponent* AbilityHitbox;
 
-private:
-
 	/* Default character stats that apply to all characters. */
-	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Replicated, meta=(AllowPrivateAccess="true"), Category = Defaults)
-	FValorCharacterStatContainer CharacterStats;
+	UPROPERTY(EditAnywhere, BlueprintReadOnly)
+	class UValorStatComponent* StatComponent;
+
+	UPROPERTY(Replicated)
+	bool bTargetable;
+
+	UPROPERTY(Replicated)
+	bool bDamageable;
 
 private:
-
-	FTimerHandle TimerHandle_StatRecovery;
 
 	UPROPERTY(Replicated)
 	EValorTeam CharacterTeam; // We want this hidden from BP in order to force PlayerState refresh.
@@ -51,19 +35,31 @@ public:
 
 	//virtual void PreInitializeComponents() override;
 
-	virtual void PostInitializeComponents() override;
+	//virtual void PostInitializeComponents() override;
 
 	//virtual void BeginPlay() override;
 
-	virtual void EndPlay(const EEndPlayReason::Type EndPlayReason) override;
+	//virtual void EndPlay(const EEndPlayReason::Type EndPlayReason) override;
 
 	//virtual void Tick(float DeltaSeconds) override;
 
 	//virtual void PossessedBy(AController* Controller) override;
 
+	virtual float TakeDamage(float DamageAmount, FDamageEvent const& DamageEvent, AController* EventInstigator, AActor* DamageCauser) override;
+
 public:
 
-	virtual void InitStats();
+	/* [Client, Unreliable, NoDedicatedServer] React to damage (such as updating the UI, playing sounds, and activating animations and particles. */
+	UFUNCTION(BlueprintNativeEvent, Category = Damage)
+		void OnDamageTaken(float DamageAmount, bool bKilledUnit, UPARAM(ref) FDamageEvent const& DamageEvent, AActor* DamageCauser);
+
+	UFUNCTION(Client, Reliable, Category = Damage)
+		void ClientOnDamageTaken(float DamageAmount, bool bKilledUnit, FDamageEvent const& DamageEvent, AActor* DamageCauser);
+
+	UFUNCTION(NetMulticast, Unreliable, Category = Damage)
+		void MulticastOnDamageTaken(float DamageAmount, bool bKilledUnit, FDamageEvent const& DamageEvent, AActor* DamageCauser);
+
+public:
 
 	/* [Server] Returns whether the specified character is an enemy of this character. */
 	UFUNCTION(BlueprintPure, Category = Stats)
@@ -80,6 +76,8 @@ public:
 
 public:
 
+	void InitStats();
+
 	UFUNCTION(BlueprintPure, Category = Stats)
 	bool IsAlive() const;
 
@@ -91,86 +89,16 @@ public:
 		CharacterTeam = NewTeam;
 	}
 
-protected:
+public:
 
 	UFUNCTION(BlueprintPure, Category = Stats)
-	const FValorCharacterStatContainer& GetCharacterStats() const;
+	class UValorStatComponent* GetStatComponent() const;
 
 public:
 	
-	UFUNCTION(BlueprintPure, Category = Stats)
-		virtual float GetMaxHealth() const;
-	
-	UFUNCTION(BlueprintPure, Category = Stats)
-		virtual float GetMaxPrimaryResource() const;
-	
-	UFUNCTION(BlueprintPure, Category = Stats)
-		virtual float GetMaxSecondaryResource() const;
-	
-	UFUNCTION(BlueprintPure, Category = Stats)
-		virtual float GetHealth() const;
-	
-	UFUNCTION(BlueprintPure, Category = Stats)
-		virtual float GetBaseHealth() const;
-	
-	UFUNCTION(BlueprintPure, Category = Stats)
-		virtual float GetHealthRegen() const;
-	
-	UFUNCTION(BlueprintPure, Category = Stats)
-		virtual float GetBaseHealthRegen() const;
-	
-	UFUNCTION(BlueprintPure, Category = Stats)
-		virtual float GetPrimaryResource() const;
-	
-	UFUNCTION(BlueprintPure, Category = Stats)
-		virtual float GetBasePrimaryResource() const;
-	
-	UFUNCTION(BlueprintPure, Category = Stats)
-		virtual float GetPrimaryResourceRegen() const;
-	
-	UFUNCTION(BlueprintPure, Category = Stats)
-		virtual float GetBasePrimaryResourceRegen() const;
-	
-	UFUNCTION(BlueprintPure, Category = Stats)
-		virtual float GetSecondaryResource() const;
-	
-	UFUNCTION(BlueprintPure, Category = Stats)
-		virtual float GetBaseSecondaryResource() const;
-	
-	UFUNCTION(BlueprintPure, Category = Stats)
-		virtual float GetSecondaryResourceRegen() const;
-	
-	UFUNCTION(BlueprintPure, Category = Stats)
-		virtual float GetBaseSecondaryResourceRegen() const;
-	
 	UFUNCTION(BlueprintCallable, Category = Stats)
-		void IncrementLevel();
-	
-	UFUNCTION(BlueprintCallable, Category = Stats)
-		void AdjustHealth(float Amount);
-	
-	UFUNCTION(BlueprintCallable, Category = Stats)
-		void AdjustPrimaryResource(float Amount);
-	
-	UFUNCTION(BlueprintCallable, Category = Stats)
-		void AdjustSecondaryResource(float Amount);
-	
-	UFUNCTION(BlueprintCallable, Category = Stats)
-		void AdjustHealthRegen(float Amount);
-	
-	UFUNCTION(BlueprintCallable, Category = Stats)
-		void AdjustPrimaryResourceRegen(float Amount);
-	
-	UFUNCTION(BlueprintCallable, Category = Stats)
-		void AdjustSecondaryResourceRegen(float Amount);
+	void IncrementLevel();
 
 	/* Called when the player levels up. */
 	virtual void OnLevelUp();
-
-protected:
-
-	/* Called when it is time to recover the character's stats. */
-	virtual void RecoverStats();
-
-	virtual void RecalculateNonResourceStats();
 };
