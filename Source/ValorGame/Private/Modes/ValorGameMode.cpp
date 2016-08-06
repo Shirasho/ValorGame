@@ -171,6 +171,15 @@ void AValorGameMode::EndPlay(const EEndPlayReason::Type EndPlayReason)
 	GetWorld()->GetTimerManager().ClearTimer(TimerHandle_LaneMinion);
 }
 
+uint8 AValorGameMode::GetMaximumPlayers() const
+{
+	return 10;
+}
+uint8 AValorGameMode::GetMaximumLevel() const
+{
+	return 20;
+}
+
 void AValorGameMode::SpawnLaneMinions()
 {
 	VALOR_LOG("Spawning lane minions.");

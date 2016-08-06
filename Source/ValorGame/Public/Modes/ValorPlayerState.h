@@ -80,6 +80,8 @@ public:
 
 	void SetLeaver(bool bInLeaver);
 
+	void AdjustExperience(int32 Value);
+
 	EValorTeam GetPlayerTeam() const;
 	uint32 GetPlayerKills() const;
 	uint32 GetPlayerDeaths() const;

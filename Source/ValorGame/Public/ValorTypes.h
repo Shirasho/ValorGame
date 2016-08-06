@@ -18,6 +18,15 @@ namespace ValorKeywords
 }
 
 UENUM(BlueprintType)
+enum class EValorStatType : uint8
+{
+	Base,
+	Current,
+	Bonus,
+	Max
+};
+
+UENUM(BlueprintType)
 enum class EValorGameMode : uint8
 {
     None = 0,

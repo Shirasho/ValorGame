@@ -14,9 +14,9 @@ AValorLaneSpawner::AValorLaneSpawner(const FObjectInitializer& ObjectInitializer
 
 void AValorLaneSpawner::SpawnUnit()
 {
-	if (HasAuthority())
+	if (HasAuthority() && SpawnClassOrder.Num() > 0)
 	{
-		if (UnitSpawnListIndex < SpawnClassOrder.Num())
+		if (UnitSpawnListIndex < SpawnClassOrder.Num() && SpawnClassOrder[UnitSpawnListIndex])
 		{
 			FVector Location = GetActorLocation();
 			FRotator Rotation = GetActorRotation();
@@ -29,7 +29,7 @@ void AValorLaneSpawner::SpawnUnit()
 			AValorLaneMinion* Minion = Cast<AValorLaneMinion>(GetWorld()->SpawnActor(SpawnClassOrder[UnitSpawnListIndex], &Location, &Rotation, SpawnParameters));
 			check(Minion);
 			Minion->SetTeam(SpawnTeam);
-			Minion->InitStats();
+			Minion->Initialize();
 
 			AValorMinionController* MinionController = GetWorld()->SpawnActor<AValorMinionController>(Location, Rotation);
 			check(MinionController);

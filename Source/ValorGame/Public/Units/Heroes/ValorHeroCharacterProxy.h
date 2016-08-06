@@ -32,7 +32,7 @@ protected:
 	TSubclassOf<AValorHeroCharacter> CharacterClass;
 
 	/* The pointer to the actual character. */
-	UPROPERTY(Replicated)
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Replicated, Category = Character)
 	AValorHeroCharacter* Character;
 
 	/* The AI Controller that will auto-navigate the player. */

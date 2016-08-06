@@ -17,7 +17,7 @@ protected:
 	UCapsuleComponent* AbilityHitbox;
 
 	/* Default character stats that apply to all characters. */
-	UPROPERTY(EditAnywhere, BlueprintReadOnly)
+	UPROPERTY(BlueprintReadOnly, Category = Stats)
 	class UValorStatComponent* StatComponent;
 
 	UPROPERTY(Replicated)
@@ -76,7 +76,7 @@ public:
 
 public:
 
-	void InitStats();
+	void Initialize(class APlayerState* InPlayerState = nullptr);
 
 	UFUNCTION(BlueprintPure, Category = Stats)
 	bool IsAlive() const;

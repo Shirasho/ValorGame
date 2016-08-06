@@ -9,6 +9,8 @@
 #include "ValorCheatManager.h"
 
 #include "ValorPlayerState.h"
+#include "ValorLocalPlayer.h"
+#include "ValorPersistentUser.h"
 
 #include "ValorHeroCharacter.h"
 #include "ValorHeroCharacterProxy.h"
@@ -213,7 +215,7 @@ void AValorPlayerController::OnPrimaryAction1Pressed()
 	{
 		if (GetValorHeroCharacter())
 		{
-			VALOR_LOG("Replication test - Player health: %f", GetValorHeroCharacter()->GetStatComponent()->GetHealth());
+			VALOR_LOG("Replication test - Player health: %f", GetValorHeroCharacter()->GetStatComponent()->GetHealth(EValorStatType::Current));
 		}
 	}
 }

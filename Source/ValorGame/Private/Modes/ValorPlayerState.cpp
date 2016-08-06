@@ -3,6 +3,7 @@
 #include "ValorGame.h"
 #include "ValorPlayerState.h"
 
+#include "ValorGameMode.h"
 #include "ValorPlayerDefinitions.h"
 #include "ValorHeroCharacter.h"
 
@@ -76,14 +77,29 @@ void AValorPlayerState::OnRep_PlayerHero()
 
 }
 
+void AValorPlayerState::AdjustExperience(int32 Value)
+{
+	PlayerExperience = FMath::Max(PlayerExperience + Value, 0);
+}
+
 void AValorPlayerState::IncrementPlayerLevel(const TArray<int32>& ExperienceRequiredToLevel)
 {
-	check(ExperienceRequiredToLevel.Num() == VALOR_MAX_CHARACTER_LEVEL - 1);
-
-	while (PlayerLevel < VALOR_MAX_CHARACTER_LEVEL && PlayerExperience >= ExperienceRequiredToLevel[PlayerLevel - 1])
+	if (HasAuthority())
 	{
-		++PlayerLevel;
-		PlayerExperience = FMath::Max(PlayerExperience - FMath::Abs(ExperienceRequiredToLevel[PlayerLevel - 1]), 0);
+		const AValorGameMode* GameMode = GetWorld()->GetAuthGameMode<AValorGameMode>();
+
+		// Must be true for server.
+		check(GameMode);
+
+		uint8 MaxPlayerLevel = GameMode->GetMaximumLevel();
+
+		while (PlayerLevel < MaxPlayerLevel && ExperienceRequiredToLevel.IsValidIndex(PlayerLevel-1) && PlayerExperience >= ExperienceRequiredToLevel[PlayerLevel - 1])
+		{
+			PlayerExperience = FMath::Max(PlayerExperience - FMath::Abs(ExperienceRequiredToLevel[PlayerLevel - 1]), 0);
+			++PlayerLevel;
+
+			//@TODO Fire off OnLevelUp event.
+		}
 	}
 }
 

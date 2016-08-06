@@ -3,257 +3,124 @@
 #pragma once
 
 #include "Components/ActorComponent.h"
-#include "ValorDataDefinitions.h"
-#include "ValorCharacterStatTableRow.h"
-#include "ValorCharacterExperienceTableRow.h"
+#include "ValorStatComponentInterface.h"
 #include "ValorStatComponent.generated.h"
 
-
-UCLASS(ClassGroup=Valor, meta=(BlueprintSpawnableComponent))
-class VALORGAME_API UValorStatComponent : public UActorComponent
+UCLASS(Config=Game, ClassGroup=Valor, meta=(BlueprintSpawnableComponent, DisplayName="Stat Component (Generic)"))
+class UValorStatComponent : public UActorComponent, public IValorStatComponentInterface
 {
-	GENERATED_BODY()
-
-public:	
-
-	UValorStatComponent();
-
-	virtual void BeginPlay() override;
-	
-	virtual void TickComponent( float DeltaTime, ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction ) override;
-
-private:
-
-	void RecoverStats();
+	GENERATED_UCLASS_BODY()
 
 public:
 
-	UFUNCTION(BlueprintPure, Category = Stats)
-		virtual float GetMaxHealth() const;
-
-	UFUNCTION(BlueprintPure, Category = Stats)
-		virtual float GetMaxPrimaryResource() const;
-
-	UFUNCTION(BlueprintPure, Category = Stats)
-		virtual float GetMaxSecondaryResource() const;
-
-	UFUNCTION(BlueprintPure, Category = Stats)
-		virtual float GetHealth() const;
-
-	UFUNCTION(BlueprintPure, Category = Stats)
-		virtual float GetBaseHealth() const;
-
-	UFUNCTION(BlueprintPure, Category = Stats)
-		virtual float GetBonusHealth() const;
-
-	UFUNCTION(BlueprintPure, Category = Stats)
-		virtual float GetHealthRegen() const;
-
-	UFUNCTION(BlueprintPure, Category = Stats)
-		virtual float GetBaseHealthRegen() const;
-
-	UFUNCTION(BlueprintPure, Category = Stats)
-		virtual float GetBonusHealthRegen() const;
-
-	UFUNCTION(BlueprintPure, Category = Stats)
-		virtual float GetPrimaryResource() const;
-
-	UFUNCTION(BlueprintPure, Category = Stats)
-		virtual float GetBasePrimaryResource() const;
-
-	UFUNCTION(BlueprintPure, Category = Stats)
-		virtual float GetBonusPrimaryResource() const;
-
-	UFUNCTION(BlueprintPure, Category = Stats)
-		virtual float GetPrimaryResourceRegen() const;
-
-	UFUNCTION(BlueprintPure, Category = Stats)
-		virtual float GetBasePrimaryResourceRegen() const;
-
-	UFUNCTION(BlueprintPure, Category = Stats)
-		virtual float GetBonusPrimaryResourceRegen() const;
-
-	UFUNCTION(BlueprintPure, Category = Stats)
-		virtual float GetSecondaryResource() const;
-
-	UFUNCTION(BlueprintPure, Category = Stats)
-		virtual float GetBaseSecondaryResource() const;
-
-	UFUNCTION(BlueprintPure, Category = Stats)
-		virtual float GetBonusSecondaryResource() const;
-
-	UFUNCTION(BlueprintPure, Category = Stats)
-		virtual float GetSecondaryResourceRegen() const;
-
-	UFUNCTION(BlueprintPure, Category = Stats)
-		virtual float GetBaseSecondaryResourceRegen() const;
-
-	UFUNCTION(BlueprintPure, Category = Stats)
-		virtual float GetBonusSecondaryResourceRegen() const;
-
-public:
-
-		void IncrementLevel();
-
-		void OnItemPurchased();
-
-	UFUNCTION(BlueprintCallable, Category = Stats)
-		void AdjustHealth(float Amount);
-
-	UFUNCTION(BlueprintCallable, Category = Stats)
-		void AdjustPrimaryResource(float Amount);
-
-	UFUNCTION(BlueprintCallable, Category = Stats)
-		void AdjustSecondaryResource(float Amount);
-
-	UFUNCTION(BlueprintCallable, Category = Stats)
-		void AdjustHealthRegen(float Amount);
-
-	UFUNCTION(BlueprintCallable, Category = Stats)
-		void AdjustPrimaryResourceRegen(float Amount);
-
-	UFUNCTION(BlueprintCallable, Category = Stats)
-		void AdjustSecondaryResourceRegen(float Amount);
-
-public:
-
-	UFUNCTION(BlueprintCallable, Category = Stats)
-		void RecalculateStats(const bool bOnInit, const bool bOnLevelUp);
-
-protected:
-
-	UFUNCTION(BlueprintNativeEvent, Category = "Stats|Replication")
-		void OnRep_Health();
-	UFUNCTION(BlueprintNativeEvent, Category = "Stats|Replication")
-		void OnRep_PrimaryResource();
-	UFUNCTION(BlueprintNativeEvent, Category = "Stats|Replication")
-		void OnRep_SecondaryResource();
-	UFUNCTION(BlueprintNativeEvent, Category = "Stats|Replication")
-		void OnRep_HealthRegen();
-	UFUNCTION(BlueprintNativeEvent, Category = "Stats|Replication")
-		void OnRep_PrimaryResourceRegen();
-	UFUNCTION(BlueprintNativeEvent, Category = "Stats|Replication")
-		void OnRep_SecondaryResourceRegen();
-
-	UFUNCTION(BlueprintNativeEvent, Category = "Stats|Replication")
-		void OnRep_BonusHealth();
-	UFUNCTION(BlueprintNativeEvent, Category = "Stats|Replication")
-		void OnRep_BonusPrimaryResource();
-	UFUNCTION(BlueprintNativeEvent, Category = "Stats|Replication")
-		void OnRep_BonusSecondaryResource();
-	UFUNCTION(BlueprintNativeEvent, Category = "Stats|Replication")
-		void OnRep_BonusHealthRegen();
-	UFUNCTION(BlueprintNativeEvent, Category = "Stats|Replication")
-		void OnRep_BonusPrimaryResourceRegen();
-	UFUNCTION(BlueprintNativeEvent, Category = "Stats|Replication")
-		void OnRep_BonusSecondaryResourceRegen();
-
-private:
-
-	void SetBaseStats();
-	void SetBaseExperience();
-
-	void SetBonusHealth(const class AValorPlayerState* PlayerState);
-	void SetBonusPrimaryResource(const class AValorPlayerState* PlayerState);
-	void SetBonusSecondaryResource(const class AValorPlayerState* PlayerState);
-	void SetBonusHealthRegen(const class AValorPlayerState* PlayerState);
-	void SetBonusPrimaryResourceRegen(const class AValorPlayerState* PlayerState);
-	void SetBonusSecondaryResourceRegen(const class AValorPlayerState* PlayerState);
-
-	void SetHealth(const class AValorPlayerState* PlayerState, const bool bOnInit, const bool bOnLevelUp);
-	void SetPrimaryResource(const class AValorPlayerState* PlayerState, const bool bOnInit, const bool bOnLevelUp);
-	void SetSecondaryResource(const class AValorPlayerState* PlayerState, const bool bOnInit, const bool bOnLevelUp);
-
-public:
-
-	UPROPERTY(EditDefaultsOnly, Category = General)
-		bool bRequiresStatInformation;
-
-	/* The external data table to read the base stats from. */
-	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, meta = (EditCondition = bRequiresStatInformation), Category = General)
-		FDataTableRowHandle StatInformation;
-	/* The external data table to read the experience from. */
-	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = General)
-		FDataTableRowHandle ExperienceInformation;
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = Stats)
+	const class UDataTable* StatTable;
 
 	/* The number of times to recover the stats every 5 seconds. For example, a value of '20' will
 	 * cause a tick every .25 seconds. */
-	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = General)
-		uint8 RecoverTickFrequency;
+	UPROPERTY(Config, EditDefaultsOnly, BlueprintReadOnly, Category = General)
+	uint8 RecoverTickFrequency;
 
 protected:
 
-	/* The current level of the character. */
-	UPROPERTY(BlueprintReadOnly, Transient, Replicated, Category = Stats)
-		uint8 Level;
-	/* The current health of the character. */
-	UPROPERTY(BlueprintReadOnly, Transient, ReplicatedUsing=OnRep_Health, Category = Stats)
-		float Health;
-	/* The current health of the character. */
-	UPROPERTY(BlueprintReadOnly, Transient, Replicated, Category = Stats)
-		int32 Experience;
-	/* The current primary resource (mana) of the character. */
-	UPROPERTY(BlueprintReadOnly, ReplicatedUsing=OnRep_PrimaryResource, Category = Stats)
-		float PrimaryResource;
-	/* The current secondary resource (character-specific) of the character. */
-	UPROPERTY(BlueprintReadOnly, ReplicatedUsing=OnRep_SecondaryResource, Category = Stats)
-		float SecondaryResource;
-	/* The current health regen of the character. */
-	UPROPERTY(BlueprintReadOnly, ReplicatedUsing=OnRep_HealthRegen, Category = Stats)
-		float HealthRegen;
-	/* The current health regen of the character. */
-	UPROPERTY(BlueprintReadOnly, ReplicatedUsing=OnRep_PrimaryResourceRegen, Category = Stats)
-		float PrimaryResourceRegen;
-	/* The current health regen of the character. */
-	UPROPERTY(BlueprintReadOnly, ReplicatedUsing=OnRep_SecondaryResourceRegen, Category = Stats)
-		float SecondaryResourceRegen;
+	UPROPERTY(BlueprintReadOnly, Replicated, Category = Stats)
+	float Health;
 
-protected:
+	UPROPERTY(BlueprintReadOnly, Replicated, Category = Stats)
+	float BonusHealth;
 
-	UPROPERTY(BlueprintReadOnly, ReplicatedUsing=OnRep_BonusHealth, Category = Stats)
-		float BonusHealth;
+	UPROPERTY(BlueprintReadOnly, Replicated, Category = Stats)
+	float BonusHealthRegen;
 
-	UPROPERTY(BlueprintReadOnly, ReplicatedUsing = OnRep_BonusPrimaryResource, Category = Stats)
-		float BonusPrimaryResource;
+	UPROPERTY(BlueprintReadOnly, Replicated, Category = Stats)
+	float BonusPhysicalDamage;
 
-	UPROPERTY(BlueprintReadOnly, ReplicatedUsing = OnRep_BonusSecondaryResource, Category = Stats)
-		float BonusSecondaryResource;
+	UPROPERTY(BlueprintReadOnly, Replicated, Category = Stats)
+	float BonusMagicalDamage;
 
-	UPROPERTY(BlueprintReadOnly, ReplicatedUsing = OnRep_BonusHealthRegen, Category = Stats)
-		float BonusHealthRegen;
+	UPROPERTY(BlueprintReadOnly, Replicated, Category = Stats)
+	float BonusPhysicalResist;
 
-	UPROPERTY(BlueprintReadOnly, ReplicatedUsing = OnRep_BonusPrimaryResourceRegen, Category = Stats)
-		float BonusPrimaryResourceRegen;
+	UPROPERTY(BlueprintReadOnly, Replicated, Category = Stats)
+	float BonusMagicalResist;
 
-	UPROPERTY(BlueprintReadOnly, ReplicatedUsing = OnRep_BonusSecondaryResourceRegen, Category = Stats)
-		float BonusSecondaryResourceRegen;
-
-public:
-
-	UPROPERTY(BlueprintReadOnly, Category = Stats)
-		TArray<int32> ExperienceRequiredPerLevel;
-
-	UPROPERTY(BlueprintReadOnly, Category = Stats)
-		TArray<float> BaseHealthPerLevel;
-
-	UPROPERTY(BlueprintReadOnly, Category = Stats)
-		TArray<float> BasePrimaryResourcePerLevel;
-
-	UPROPERTY(BlueprintReadOnly, Category = Stats)
-		TArray<float> BaseSecondaryResourcePerLevel;
-
-	UPROPERTY(BlueprintReadOnly, Category = Stats)
-		TArray<float> BaseHealthRegenPerLevel;
-
-	UPROPERTY(BlueprintReadOnly, Category = Stats)
-		TArray<float> BasePrimaryResourceRegenPerLevel;
-
-	UPROPERTY(BlueprintReadOnly, Category = Stats)
-		TArray<float> BaseSecondaryResourceRegenPerLevel;
+	UPROPERTY(Replicated)
+	TArray<float> BaseHealthPerLevel;
+	UPROPERTY(Replicated)
+	TArray<float> BaseHealthRegenPerLevel;
+	UPROPERTY(Replicated)
+	TArray<float> BasePhysicalDamagePerLevel;
+	UPROPERTY(Replicated)
+	TArray<float> BaseMagicalDamagePerLevel;
+	UPROPERTY(Replicated)
+	TArray<float> BasePhysicalResistPerLevel;
+	UPROPERTY(Replicated)
+	TArray<float> BaseMagicalResistPerLevel;
 
 private:
 
 	FTimerHandle TimerHandle_RecoverStats;
 
-	bool bSetupComplete;
+public:
+
+	virtual void BeginPlay() override;
+
+public:
+
+	UFUNCTION(BlueprintPure, Category = Stats)
+	virtual float GetHealth(EValorStatType StatType) const;
+
+	UFUNCTION(BlueprintCallable, Category = Stats)
+	virtual void SetHealth(float Value);
+
+	UFUNCTION(BlueprintCallable, Category = Stats)
+	virtual void AdjustHealth(float Value);
+
+	UFUNCTION(BlueprintCallable, Category = Stats)
+	virtual void AdjustBonusHealth(float Value);
+
+	/* Secondary resource won't be implemented here as it adds
+	* unnecessary bloat. Heroes or units that need it can extend
+	* ValorStatComponent (or ValorHeroStatComponent) and implement
+	* it where needed. */
+
+	UFUNCTION(BlueprintPure, Category = Stats)
+	virtual float GetHealthRegen(EValorStatType StatType) const;
+
+	UFUNCTION(BlueprintCallable, Category = Stats)
+	virtual void AdjustBonusHealthRegen(float Value);
+
+
+	UFUNCTION(BlueprintPure, Category = Stats)
+	virtual float GetPhysicalDamage(EValorStatType StatType) const;
+
+	UFUNCTION(BlueprintCallable, Category = Stats)
+	virtual void AdjustBonusPhysicalDamage(float Value);
+
+
+	UFUNCTION(BlueprintPure, Category = Stats)
+	virtual float GetMagicalDamage(EValorStatType StatType) const;
+
+	UFUNCTION(BlueprintCallable, Category = Stats)
+	virtual void AdjustBonusMagicalDamage(float Value);
+
+
+	UFUNCTION(BlueprintPure, Category = Stats)
+	virtual float GetPhysicalResist(EValorStatType StatType) const;
+
+	UFUNCTION(BlueprintCallable, Category = Stats)
+	virtual void AdjustBonusPhysicalResist(float Value);
+
+
+	UFUNCTION(BlueprintPure, Category = Stats)
+	virtual float GetMagicalResist(EValorStatType StatType) const;
+
+	UFUNCTION(BlueprintCallable, Category = Stats)
+	virtual void AdjustBonusMagicalResist(float Value);
+
+	virtual void Initialize(const class AValorPlayerState* PlayerState = nullptr);
+
+protected:
+
+	virtual void RecoverStats();
 };

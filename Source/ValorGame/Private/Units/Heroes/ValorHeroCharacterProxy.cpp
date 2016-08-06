@@ -158,7 +158,7 @@ void AValorHeroCharacterProxy::ServerCreatePlayer_Implementation(/*const APlayer
 
 		Character = Cast<AValorHeroCharacter>(GetWorld()->SpawnActor(CharacterClass, &Location, &Rotation, SpawnParameters));
 		Character->PlayerState = PlayerState;
-		Character->InitStats();
+		Character->Initialize(PlayerState);
 
 		CharacterAI = GetWorld()->SpawnActor<AValorHeroAIController>(GetActorLocation(), GetActorRotation());
 		CharacterAI->PlayerState = PlayerState;

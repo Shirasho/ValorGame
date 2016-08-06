@@ -43,14 +43,6 @@ AValorCharacter::AValorCharacter(const FObjectInitializer& ObjectInitializer)
 			MovementComponent->GroundFriction = 0.f;
 		}
 
-		StatComponent = CreateDefaultSubobject<UValorStatComponent>(TEXT("StatComponent"));
-		if (StatComponent)
-		{
-			StatComponent->bAutoActivate = true;
-			StatComponent->SetNetAddressable();
-			StatComponent->SetIsReplicated(true);
-			//StatComponent->RegisterComponent();
-		}
 		CharacterTeam = EValorTeam::None;
 	}
 
@@ -201,20 +193,32 @@ EValorTeam AValorCharacter::GetTeam() const
 
 bool AValorCharacter::IsAlive() const
 {
-	return (StatComponent->GetHealth() > 0);
+	bool bAlive = IsValidLowLevel();
+	return bAlive && (GetStatComponent() ? StatComponent->GetHealth(EValorStatType::Current) > 0 : true);
 }
 
-void AValorCharacter::InitStats()
+void AValorCharacter::Initialize(class APlayerState* InPlayerState)
 {
 	if (HasAuthority())
 	{
-		StatComponent->RecalculateStats(true, false);
+		PlayerState = InPlayerState;
+		if (GetStatComponent())
+		{
+			StatComponent->Initialize(Cast<AValorPlayerState>(InPlayerState));
+		}
 	}
 }
 
 UValorStatComponent* AValorCharacter::GetStatComponent() const
 {
-	return StatComponent;
+	if (StatComponent)
+	{
+		return StatComponent;
+	}
+
+	/* Mutable instance of this to work around const. */
+	AValorCharacter* MutableThis = const_cast<AValorCharacter*>(this);
+	return MutableThis->StatComponent = FindComponentByClass<UValorStatComponent>();
 }
 
 void AValorCharacter::IncrementLevel()
@@ -222,13 +226,13 @@ void AValorCharacter::IncrementLevel()
 	AValorPlayerState* MyPlayerState = Cast<AValorPlayerState>(PlayerState);
 	if (MyPlayerState)
 	{
-		MyPlayerState->IncrementPlayerLevel(StatComponent->ExperienceRequiredPerLevel);
+		//MyPlayerState->IncrementPlayerLevel(StatComponent->ExperienceRequiredPerLevel);
 	}
 }
 
 void AValorCharacter::OnLevelUp()
 {
-	StatComponent->RecalculateStats(false, true);
+	//StatComponent->RecalculateStats(false, true);
 }
 
 float AValorCharacter::PlayAnimMontage(class UAnimMontage* AnimMontage, float InPlayRate, FName StartSectionName)

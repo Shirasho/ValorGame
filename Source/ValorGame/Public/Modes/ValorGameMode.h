@@ -50,6 +50,11 @@ public:
 	/* Whether cheats are allowed. */
 	virtual bool AllowCheats(APlayerController* P) override;
 
+public:
+
+	virtual uint8 GetMaximumPlayers() const;
+	virtual uint8 GetMaximumLevel() const;
+
 protected:
 
 	/* Check if player can use this PlayerStart. */
