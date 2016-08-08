@@ -22,6 +22,11 @@ public class ValorGameTarget : TargetRules
 		)
 	{
 		OutExtraModuleNames.AddRange( new string[] { "ValorGame" } );
+
+        if (UEBuildConfiguration.bBuildEditor)
+        {
+            OutExtraModuleNames.Add("ValorGameEditor");
+        }
 	}
 
     public override List<UnrealTargetPlatform> GUBP_GetPlatforms_MonolithicOnly(UnrealTargetPlatform HostPlatform)

@@ -15,7 +15,8 @@
 		},
 		{
 			"Name": "ValorGameEditor",
-			"Type": "Editor"
+			"Type": "Editor",
+			"LoadingPhase": "PostEngineInit"
 		}
 	],
 	"TargetPlatforms": [

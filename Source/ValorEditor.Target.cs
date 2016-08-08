@@ -20,6 +20,6 @@ public class ValorEditorTarget : TargetRules
 		ref List<string> OutExtraModuleNames
 		)
 	{
-		OutExtraModuleNames.AddRange( new string[] { "ValorGame" } );
+		OutExtraModuleNames.AddRange( new string[] { "ValorGameEditor" } );
 	}
 }

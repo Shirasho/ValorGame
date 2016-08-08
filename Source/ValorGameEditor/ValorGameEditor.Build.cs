@@ -7,8 +7,8 @@ public class ValorGameEditor : ModuleRules
     public ValorGameEditor(TargetInfo Target)
     {
         PublicIncludePaths.AddRange(new string[] {
-            "ValorGame",
-            "ValorGame/Public"
+            "ValorGameEditor",
+            "ValorGameEditor/Public"
         });
 
         PublicIncludePathModuleNames.AddRange(new string[] {
@@ -29,7 +29,6 @@ public class ValorGameEditor : ModuleRules
         });
 
         PrivateDependencyModuleNames.AddRange(new string[] {
-            "Core",
             "CoreUObject",
             "InputCore",
             "Slate",
@@ -45,7 +44,6 @@ public class ValorGameEditor : ModuleRules
             "EditorStyle",
             "Slate",
             "SlateCore",
-            "MovieSceneCore",
             "Sequencer",
             "DetailCustomizations",
             "Settings",
