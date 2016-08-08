@@ -82,7 +82,7 @@ void AValorPlayerState::AdjustExperience(int32 Value)
 	PlayerExperience = FMath::Max(PlayerExperience + Value, 0);
 }
 
-void AValorPlayerState::IncrementPlayerLevel(const TArray<int32>& ExperienceRequiredToLevel)
+uint8 AValorPlayerState::IncrementPlayerLevel(const TArray<int32>& ExperienceRequiredToLevel)
 {
 	if (HasAuthority())
 	{
@@ -93,14 +93,19 @@ void AValorPlayerState::IncrementPlayerLevel(const TArray<int32>& ExperienceRequ
 
 		uint8 MaxPlayerLevel = GameMode->GetMaximumLevel();
 
+		uint8 GainedLevels = 0;
+
 		while (PlayerLevel < MaxPlayerLevel && ExperienceRequiredToLevel.IsValidIndex(PlayerLevel-1) && PlayerExperience >= ExperienceRequiredToLevel[PlayerLevel - 1])
 		{
 			PlayerExperience = FMath::Max(PlayerExperience - FMath::Abs(ExperienceRequiredToLevel[PlayerLevel - 1]), 0);
 			++PlayerLevel;
-
-			//@TODO Fire off OnLevelUp event.
+			++GainedLevels;
 		}
+
+		return GainedLevels;
 	}
+
+	return 0;
 }
 
 EValorTeam AValorPlayerState::GetPlayerTeam() const

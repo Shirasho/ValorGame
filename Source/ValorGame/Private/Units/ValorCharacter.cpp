@@ -11,7 +11,7 @@
 #include "ValorHeroAIController.h"
 #include "ValorMinionController.h"
 
-#include "ValorStatComponent.h"
+#include "ValorUnitStatComponent.h"
 
 AValorCharacter::AValorCharacter(const FObjectInitializer& ObjectInitializer)
 	: Super(ObjectInitializer)
@@ -219,15 +219,6 @@ UValorStatComponent* AValorCharacter::GetStatComponent() const
 	/* Mutable instance of this to work around const. */
 	AValorCharacter* MutableThis = const_cast<AValorCharacter*>(this);
 	return MutableThis->StatComponent = FindComponentByClass<UValorStatComponent>();
-}
-
-void AValorCharacter::IncrementLevel()
-{
-	AValorPlayerState* MyPlayerState = Cast<AValorPlayerState>(PlayerState);
-	if (MyPlayerState)
-	{
-		//MyPlayerState->IncrementPlayerLevel(StatComponent->ExperienceRequiredPerLevel);
-	}
 }
 
 void AValorCharacter::OnLevelUp()

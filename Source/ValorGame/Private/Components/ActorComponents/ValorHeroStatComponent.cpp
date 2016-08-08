@@ -3,6 +3,7 @@
 #include "ValorGame.h"
 #include "ValorHeroStatComponent.h"
 
+#include "ValorCharacter.h"
 #include "ValorPlayerState.h"
 
 UValorHeroStatComponent::UValorHeroStatComponent(const FObjectInitializer& ObjectInitializer)
@@ -33,16 +34,25 @@ int32 UValorHeroStatComponent::GetExperience() const
 }
 void UValorHeroStatComponent::AdjustExperience(int32 Value)
 {
-	const APawn* Owner = Cast<APawn>(GetOwner());
+	APawn* Owner = Cast<APawn>(GetOwner());
 	check(Owner);
 
 	AValorPlayerState* ValorPlayerState = Cast<AValorPlayerState>(Owner->PlayerState);
 	if (ensure(ValorPlayerState))
 	{
 		ValorPlayerState->AdjustExperience(Value);
-		ValorPlayerState->IncrementPlayerLevel(RequiredExperiencePerLevel);
+		uint8 TimesLeveledUp = ValorPlayerState->IncrementPlayerLevel(RequiredExperiencePerLevel);
+
+		UnitLevel += TimesLeveledUp;
+
+		AValorCharacter* VOwner = Cast<AValorCharacter>(Owner);
+		check(VOwner);
+
+		for (TimesLeveledUp; TimesLeveledUp > 0; --TimesLeveledUp)
+		{
+			VOwner->OnLevelUp();
+		}
 	}
-	Super::AdjustExperience(Value);
 }
 
 uint8 UValorHeroStatComponent::GetUnitLevel() const

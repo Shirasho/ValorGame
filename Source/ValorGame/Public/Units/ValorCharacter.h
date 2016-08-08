@@ -95,9 +95,6 @@ public:
 	class UValorStatComponent* GetStatComponent() const;
 
 public:
-	
-	UFUNCTION(BlueprintCallable, Category = Stats)
-	void IncrementLevel();
 
 	/* Called when the player levels up. */
 	virtual void OnLevelUp();

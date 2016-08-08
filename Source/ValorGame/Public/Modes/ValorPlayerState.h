@@ -66,7 +66,7 @@ public:
 
 public:
 
-	void IncrementPlayerLevel(const TArray<int32>& ExperienceRequiredToLevel);
+	uint8 IncrementPlayerLevel(const TArray<int32>& ExperienceRequiredToLevel);
 
 public:
 

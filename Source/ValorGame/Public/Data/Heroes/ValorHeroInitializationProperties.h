@@ -14,20 +14,20 @@ public:
 
 	/* The UValorMainInterfaceWidget class to use as the main user interface. */
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Visuals|GUI")
-	TSubclassOf<UValorMainInterfaceWidget> MainUserInterface;
+		TSubclassOf<UValorMainInterfaceWidget> MainUserInterface;
 
 	/* A decal that projects to the cursor location. */
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Visuals|Cursor")
-	UMaterialInterface* ClickCursorDecal;
+		UMaterialInterface* ClickCursorDecal;
 
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Visuals|Particles")
-	UParticleSystem* SpawnParticleTemplate;
+		UParticleSystem* SpawnParticleTemplate;
 
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Visuals|Particles")
-	UParticleSystem* DeathParticleTemplate;
+		TAssetPtr<UParticleSystem> DeathParticleTemplate;
 
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Audio|Spawn")
-	USoundCue* SpawnSoundCue;
+		USoundCue* SpawnSoundCue;
 
 
 	FValorHeroInitializationProperties()
