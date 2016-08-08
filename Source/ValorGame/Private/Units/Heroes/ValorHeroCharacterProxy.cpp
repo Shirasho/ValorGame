@@ -19,6 +19,8 @@ AValorHeroCharacterProxy::AValorHeroCharacterProxy(const FObjectInitializer& Obj
 	bUseControllerRotationYaw = false;
 	bUseControllerRotationRoll = false;
 
+	bCenterCamera = false;
+
 	UCapsuleComponent* DummyRootComponent = CreateDefaultSubobject<UCapsuleComponent>(TEXT("DummyRootComponent"));
 	DummyRootComponent->InitCapsuleSize(1.f, 1.f);
 	DummyRootComponent->SetCollisionEnabled(ECollisionEnabled::NoCollision);
@@ -40,8 +42,6 @@ AValorHeroCharacterProxy::AValorHeroCharacterProxy(const FObjectInitializer& Obj
 	CameraComponent->bUsePawnControlRotation = false; // Camera does not rotate relative to arm
 	CameraComponent->SetOrthoWidth(1500.f);
 	CameraComponent->SetProjectionMode(ECameraProjectionMode::Orthographic);
-
-	bCenterCamera = false;
 }
 
 void AValorHeroCharacterProxy::PostInitializeComponents()
