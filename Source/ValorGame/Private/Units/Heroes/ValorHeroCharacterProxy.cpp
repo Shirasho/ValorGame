@@ -21,7 +21,6 @@ AValorHeroCharacterProxy::AValorHeroCharacterProxy(const FObjectInitializer& Obj
 
 	bCenterCamera = false;
 
-
 	UCapsuleComponent* DummyRootComponent = CreateDefaultSubobject<UCapsuleComponent>(TEXT("DummyRootComponent"));
 	DummyRootComponent->InitCapsuleSize(1.f, 1.f);
 	DummyRootComponent->SetCollisionEnabled(ECollisionEnabled::NoCollision);
