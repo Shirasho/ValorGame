@@ -25,7 +25,7 @@ AValorHeroCharacterProxy::AValorHeroCharacterProxy(const FObjectInitializer& Obj
 	DummyRootComponent->SetCollisionResponseToAllChannels(ECR_Ignore);
 	RootComponent = DummyRootComponent;
 
-	// Create a camera boom...
+	// Create a camera boom
 	CameraBoomComponent = CreateDefaultSubobject<USpringArmComponent>(TEXT("CameraBoom"));
 	CameraBoomComponent->SetupAttachment(RootComponent);
 	CameraBoomComponent->bAbsoluteRotation = true; // Don't want arm to rotate when character does
@@ -34,7 +34,7 @@ AValorHeroCharacterProxy::AValorHeroCharacterProxy(const FObjectInitializer& Obj
 	CameraBoomComponent->SetWorldRotation(FRotator::MakeFromEuler(FVector(0.f, -45.f, -90.f)));
 	CameraBoomComponent->bDoCollisionTest = false; // Don't want to pull camera in when it collides with level
 
-	// Create a camera...
+	// Create a camera
 	CameraComponent = CreateDefaultSubobject<UCameraComponent>(TEXT("CameraComponent"));
 	CameraComponent->SetupAttachment(CameraBoomComponent, USpringArmComponent::SocketName);
 	CameraComponent->bUsePawnControlRotation = false; // Camera does not rotate relative to arm
