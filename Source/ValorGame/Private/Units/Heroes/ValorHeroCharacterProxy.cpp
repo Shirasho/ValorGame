@@ -70,54 +70,12 @@ AValorHeroCharacter* AValorHeroCharacterProxy::GetValorHeroCharacter() const
 	return Character;
 }
 
-
-bool AValorHeroCharacterProxy::ServerCreatePlayer_Validate(/*const APlayerState* ControllerPlayerState*/)
-{
-	return true;/*ControllerPlayerState != nullptr;*/
-}
-
-void AValorHeroCharacterProxy::ServerCreatePlayer_Implementation(/*const APlayerState* ControllerPlayerState*/)
-{
-	if (HasAuthority())
-	{
-		const AValorPlayerState* MyPlayerState = Cast<AValorPlayerState>(PlayerState);
-		if (MyPlayerState)
-		{
-			CharacterClass = MyPlayerState->HeroCharacter;
-		}
-
-		check(CharacterClass);
-
-		// Get the current location of the player proxy.
-		FVector Location = GetActorLocation();
-		FRotator Rotation = GetActorRotation();
-
-		FActorSpawnParameters SpawnParameters;
-		SpawnParameters.Owner = this;
-		SpawnParameters.Instigator = Instigator;
-		SpawnParameters.SpawnCollisionHandlingOverride = ESpawnActorCollisionHandlingMethod::AdjustIfPossibleButAlwaysSpawn;
-
-		Character = Cast<AValorHeroCharacter>(GetWorld()->SpawnActor(CharacterClass, &Location, &Rotation, SpawnParameters));
-		Character->PlayerState = PlayerState;
-		Character->Initialize(PlayerState);
-
-		CharacterAI = GetWorld()->SpawnActor<AValorHeroAIController>(GetActorLocation(), GetActorRotation());
-		CharacterAI->PlayerState = PlayerState;
-		CharacterAI->Possess(Character);
-	}
-}
-
 void AValorHeroCharacterProxy::MoveToLocation(const AValorPlayerController* InController, const FVector& Location)
 {
 	if (CharacterAI)
 	{
 		CharacterAI->MoveToLocation(Location, 10.f, true, true, false, false);
 	}
-}
-
-void AValorHeroCharacterProxy::OnCharacterMovement()
-{
-	DisplayMovementDecal();
 }
 
 void AValorHeroCharacterProxy::DisplayMovementDecal()
@@ -200,6 +158,12 @@ void AValorHeroCharacterProxy::ProcessCameraInput(float DeltaSeconds)
 	}
 }
 
+
+void AValorHeroCharacterProxy::OnCharacterMovement()
+{
+	DisplayMovementDecal();
+}
+
 void AValorHeroCharacterProxy::OnCameraCenterPressed()
 {
 	bCenterCamera = true;
@@ -209,6 +173,44 @@ void AValorHeroCharacterProxy::OnCameraCenterReleased()
 {
 	bCenterCamera = false;
 }
+
+
+bool AValorHeroCharacterProxy::ServerCreatePlayer_Validate(/*const APlayerState* ControllerPlayerState*/)
+{
+	return true;/*ControllerPlayerState != nullptr;*/
+}
+
+void AValorHeroCharacterProxy::ServerCreatePlayer_Implementation(/*const APlayerState* ControllerPlayerState*/)
+{
+	if (HasAuthority())
+	{
+		const AValorPlayerState* MyPlayerState = Cast<AValorPlayerState>(PlayerState);
+		if (MyPlayerState)
+		{
+			CharacterClass = MyPlayerState->HeroCharacter;
+		}
+
+		check(CharacterClass);
+
+		// Get the current location of the player proxy.
+		FVector Location = GetActorLocation();
+		FRotator Rotation = GetActorRotation();
+
+		FActorSpawnParameters SpawnParameters;
+		SpawnParameters.Owner = this;
+		SpawnParameters.Instigator = Instigator;
+		SpawnParameters.SpawnCollisionHandlingOverride = ESpawnActorCollisionHandlingMethod::AdjustIfPossibleButAlwaysSpawn;
+
+		Character = Cast<AValorHeroCharacter>(GetWorld()->SpawnActor(CharacterClass, &Location, &Rotation, SpawnParameters));
+		Character->PlayerState = PlayerState;
+		Character->Initialize(PlayerState);
+
+		CharacterAI = GetWorld()->SpawnActor<AValorHeroAIController>(GetActorLocation(), GetActorRotation());
+		CharacterAI->PlayerState = PlayerState;
+		CharacterAI->Possess(Character);
+	}
+}
+
 
 void AValorHeroCharacterProxy::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const
 {
