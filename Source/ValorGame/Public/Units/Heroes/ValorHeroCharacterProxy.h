@@ -10,6 +10,8 @@
 
 class AValorHeroCharacter;
 
+DECLARE_STATS_GROUP(TEXT("ValorGame"), STATGROUP_ValorCharacterProxy, STATCAT_Advanced);
+
 /* This class works as a proxy on the client that tracks the movements of the real 
  * character on the server. This is necessary to work around a known bug regarding 
  * the lack of network functionality for UNavigationSystem::SimpleMoveToLocation(). */

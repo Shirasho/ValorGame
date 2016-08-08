@@ -3,6 +3,7 @@
 #pragma once
 
 #include "ValorCharacter.h"
+#include "ValorAbilityInterface.h"
 #include "ValorHeroInitializationProperties.h"
 #include "ValorHeroCharacter.generated.h"
 
@@ -16,6 +17,13 @@ protected:
 	/* Default properties that apply to Heroes. */
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Replicated, Category = Defaults)
 	FValorHeroInitializationProperties CharacterDefaults;
+
+protected:
+
+	IValorAbilityInterface* UnitAbilityOne;
+	IValorAbilityInterface* UnitAbilityTwo;
+	IValorAbilityInterface* UnitAbilityThree;
+	IValorAbilityInterface* UnitAbilityFour;
 
 public:
 

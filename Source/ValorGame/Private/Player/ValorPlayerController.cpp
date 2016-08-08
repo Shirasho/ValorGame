@@ -215,7 +215,7 @@ void AValorPlayerController::OnPrimaryAction1Pressed()
 	{
 		if (GetValorHeroCharacter())
 		{
-			VALOR_LOG("Replication test - Player health: %f", GetValorHeroCharacter()->GetStatComponent()->GetHealth(EValorStatType::Current));
+			VALOR_PRINT("Replication test - Player health: %f", GetValorHeroCharacter()->GetStatComponent()->GetHealth(EValorStatType::Current));
 		}
 	}
 }
@@ -266,7 +266,7 @@ void AValorPlayerController::OnAbilityAction1Pressed()
 	const ULocalPlayer* LocalPlayer = Cast<ULocalPlayer>(Player);
 	if (LocalPlayer && (LocalPlayer->ViewportClient->Viewport && LocalPlayer->ViewportClient->Viewport->IsForegroundWindow()))
 	{
-		VALOR_LOG("UI Test - AbilityAction1 pressed. ");
+		VALOR_PRINT("UI Test - AbilityAction1 pressed. ");
 	}
 }
 
@@ -280,7 +280,7 @@ void AValorPlayerController::OnAbilityAction2Pressed()
 	const ULocalPlayer* LocalPlayer = Cast<ULocalPlayer>(Player);
 	if (LocalPlayer && (LocalPlayer->ViewportClient->Viewport && LocalPlayer->ViewportClient->Viewport->IsForegroundWindow()))
 	{
-		VALOR_LOG("UI Test - AbilityAction2 pressed. ");
+		VALOR_PRINT("UI Test - AbilityAction2 pressed. ");
 	}
 }
 

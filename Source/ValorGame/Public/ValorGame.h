@@ -21,6 +21,7 @@
 #include "ValorUIDefinitions.h"         // UI definitions
 #include "ValorLogDefinitions.h"		// Logging macros
 #include "ValorDataDefinitions.h"		// Definitions for data curves and tables
+#include "ValorMiscDefinitions.h"		// Random definitions
 
 DECLARE_LOG_CATEGORY_EXTERN(LogValor, Log, All);
 DECLARE_LOG_CATEGORY_EXTERN(LogValorClient, Log, All);

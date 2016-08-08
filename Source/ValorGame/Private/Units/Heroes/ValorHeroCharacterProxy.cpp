@@ -12,6 +12,8 @@
 #define VALOR_CURSOR_ZONE_USE_PCT 0
 #define VALOR_CAMERA_PAN_SPEED 2500.f
 
+DECLARE_CYCLE_STAT(TEXT("ValorGame ~ ProcessCameraInput"), STAT_ProcessCameraInput, STATGROUP_ValorCharacterProxy);
+
 AValorHeroCharacterProxy::AValorHeroCharacterProxy(const FObjectInitializer& ObjectInitializer)
 	: Super(ObjectInitializer)
 {
@@ -96,6 +98,7 @@ void AValorHeroCharacterProxy::DisplayMovementDecal()
 
 void AValorHeroCharacterProxy::ProcessCameraInput(float DeltaSeconds)
 {
+	SCOPE_CYCLE_COUNTER(STAT_ProcessCameraInput);
 	if (Character)
 	{
 		if (bCenterCamera)

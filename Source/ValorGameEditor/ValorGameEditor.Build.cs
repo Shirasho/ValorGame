@@ -2,12 +2,13 @@
 
 using UnrealBuildTool;
 
-public class ValorGame : ModuleRules
+public class ValorGameEditor : ModuleRules
 {
-    public ValorGame(TargetInfo Target)
+    public ValorGameEditor(TargetInfo Target)
     {
         PublicIncludePaths.AddRange(new string[] {
-
+            "ValorGame",
+            "ValorGame/Public"
         });
 
         PublicIncludePathModuleNames.AddRange(new string[] {
@@ -15,32 +16,40 @@ public class ValorGame : ModuleRules
         });
 
         PrivateIncludePaths.AddRange(new string[] {
-            "ValorGame/Private"
+            "ValorGameEditor/Private"
         });
 
         PrivateIncludePathModuleNames.AddRange(new string[] {
-            "NetworkReplayStreaming"
+
         });
 
         PublicDependencyModuleNames.AddRange(new string[] {
             "Core",
-            "CoreUObject",
-            "Engine",
-            "OnlineSubsystem",
-            "OnlineSubsystemUtils",
-            "AssetRegistry",
-            "AIModule",
-            "GameplayTasks",
-            "Slate",
-            "SlateCore",
-            "UMG"
+            "ValorGame"
         });
 
         PrivateDependencyModuleNames.AddRange(new string[] {
+            "Core",
+            "CoreUObject",
             "InputCore",
-            //"ValorLoadingScreen",
-            "Json",
-            "OnlineSubsystem"
+            "Slate",
+            "Engine",
+            "AssetTools",
+            "UnrealEd", // for FAssetEditorManager
+            "KismetWidgets",
+            "KismetCompiler",
+            "BlueprintGraph",
+            "GraphEditor",
+            "Kismet",  // for FWorkflowCentricApplication
+            "PropertyEditor",
+            "EditorStyle",
+            "Slate",
+            "SlateCore",
+            "MovieSceneCore",
+            "Sequencer",
+            "DetailCustomizations",
+            "Settings",
+            "RenderCore"
         });
 
         DynamicallyLoadedModuleNames.AddRange(new string[] {
@@ -49,7 +58,6 @@ public class ValorGame : ModuleRules
             "NullNetworkReplayStreaming",
             "HttpNetworkReplayStreaming"
         });
-
 
 
         if ((Target.Platform == UnrealTargetPlatform.Win32) || (Target.Platform == UnrealTargetPlatform.Win64) || (Target.Platform == UnrealTargetPlatform.Linux) || (Target.Platform == UnrealTargetPlatform.Mac))

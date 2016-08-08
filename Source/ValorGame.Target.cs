@@ -8,6 +8,7 @@ public class ValorGameTarget : TargetRules
 	public ValorGameTarget(TargetInfo Target)
 	{
 		Type = TargetType.Game;
+        bUsesSteam = true;
 	}
 
 	//

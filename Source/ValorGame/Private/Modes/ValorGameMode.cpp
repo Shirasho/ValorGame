@@ -182,7 +182,6 @@ uint8 AValorGameMode::GetMaximumLevel() const
 
 void AValorGameMode::SpawnLaneMinions()
 {
-	VALOR_LOG("Spawning lane minions.");
 	UE_LOG(LogValorServer, Log, TEXT("Spawning lane minions."));
 
 	for (TActorIterator<AValorLaneSpawner> It(GetWorld()); It; ++It)
@@ -193,7 +192,6 @@ void AValorGameMode::SpawnLaneMinions()
 
 void AValorGameMode::SpawnJungleMinions()
 {
-	VALOR_LOG("Spawning jungle minions.");
 	UE_LOG(LogValorServer, Log, TEXT("Spawning jungle minions."));
 
 	for (TActorIterator<AValorJungleSpawner> It(GetWorld()); It; ++It)

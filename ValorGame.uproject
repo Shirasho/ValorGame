@@ -12,6 +12,10 @@
 				"Engine",
 				"CoreUObject"
 			]
+		},
+		{
+			"Name": "ValorGameEditor",
+			"Type": "Editor"
 		}
 	],
 	"TargetPlatforms": [
