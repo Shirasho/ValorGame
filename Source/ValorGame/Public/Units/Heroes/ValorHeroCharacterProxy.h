@@ -80,6 +80,11 @@ protected:
 	/* Displays the movement decal when the player clicks on a valid movement location. */
 	void DisplayMovementDecal();
 
+private:
+
+	/* Handles camera processing. */
+	void ProcessCameraInput(float DeltaSeconds);
+
 public:
 
 	AValorHeroCharacter* GetValorHeroCharacter() const;
