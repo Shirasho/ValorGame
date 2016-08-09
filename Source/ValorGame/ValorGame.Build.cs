@@ -38,7 +38,7 @@ public class ValorGame : ModuleRules
 
         PrivateDependencyModuleNames.AddRange(new string[] {
             "InputCore",
-            //"ValorLoadingScreen",
+            "ValorGameLoading",
             "Json",
             "OnlineSubsystem"
         });
