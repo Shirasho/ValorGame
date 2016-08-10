@@ -4,6 +4,8 @@
 
 #include "ValorPlayerController.generated.h"
 
+DECLARE_STATS_GROUP(TEXT("ValorGame"), STATGROUP_ValorPlayerController, STATCAT_Advanced);
+
 UCLASS(Config = Game)
 class AValorPlayerController : public APlayerController
 {
@@ -14,6 +16,10 @@ protected:
 
 	/* The UValorMainInterfaceWidget to use as the main GUI. */
 	class UValorMainInterfaceWidget* MainUserInterface;
+
+private:
+
+	TWeakObjectPtr<class AValorCharacter> CurrentlyHoveredActor;
 
 private:
 
@@ -43,6 +49,19 @@ public:
 	virtual void Tick(float DeltaSeconds) override;
 
     virtual void SetupInputComponent() override;
+
+public:
+
+	bool GetHitResultsAtScreenPosition(const FVector2D ScreenPosition, const ECollisionChannel TraceChannel, const FCollisionQueryParams& CollisionQueryParams, TArray<FHitResult>& HitResults) const;
+	bool GetHitResultsAtScreenPosition(const FVector2D ScreenPosition, const ECollisionChannel TraceChannel, bool bTraceComplex, TArray<FHitResult>& HitResults) const;
+	bool GetHitResultsAtScreenPosition(const FVector2D ScreenPosition, const ETraceTypeQuery TraceChannel, bool bTraceComplex, TArray<FHitResult>& HitResults) const;
+	bool GetHitResultsAtScreenPosition(const FVector2D ScreenPosition, const TArray<TEnumAsByte<EObjectTypeQuery> > & ObjectTypes, bool bTraceComplex, TArray<FHitResult>& HitResults) const;
+
+	UFUNCTION(BlueprintCallable, Category = "Game|Player", meta = (bTraceComplex = true))
+		bool GetHitResultsUnderCursorByChannel(ETraceTypeQuery TraceChannel, bool bTraceComplex, TArray<FHitResult>& HitResults) const;
+
+	UFUNCTION(BlueprintCallable, Category = "Game|Player", meta = (bTraceComplex = true))
+		bool GetHitResultsUnderCursorForObjects(const TArray<TEnumAsByte<EObjectTypeQuery> > & ObjectTypes, bool bTraceComplex, TArray<FHitResult>& HitResults) const;
 
 public:
 
@@ -204,4 +223,8 @@ private:
 
 	UFUNCTION(Client, Reliable)
 	void ClientValorInitUserInterface();
+
+private:
+
+	void DetectMouseOver();
 };

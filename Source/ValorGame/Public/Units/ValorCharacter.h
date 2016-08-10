@@ -28,10 +28,13 @@ protected:
 	UPROPERTY(Replicated)
 	bool bDamageable;
 
+	UPROPERTY(Replicated)
+	bool bStealthed;
+
 private:
 
 	UPROPERTY(Replicated)
-	EValorTeam CharacterTeam; // We want this hidden from BP in order to force PlayerState refresh.
+	EValorTeam CharacterTeam; // We want this hidden from inherited classes in order to force PlayerState refresh.
 
 public:
 
@@ -39,7 +42,7 @@ public:
 
 	//virtual void PostInitializeComponents() override;
 
-	//virtual void BeginPlay() override;
+	virtual void BeginPlay() override;
 
 	//virtual void EndPlay(const EEndPlayReason::Type EndPlayReason) override;
 
@@ -89,6 +92,24 @@ public:
 	void SetTeam(EValorTeam NewTeam)
 	{
 		CharacterTeam = NewTeam;
+	}
+
+	UFUNCTION(BlueprintPure, Category = Stats)
+	bool IsStealthed() const
+	{
+		return bStealthed;
+	}
+
+	UFUNCTION(BlueprintPure, Category = Stats)
+	bool IsDamageable() const
+	{
+		return bDamageable;
+	}
+
+	UFUNCTION(BlueprintPure, Category = Stats)
+	bool IsTargetable() const
+	{
+		return bTargetable;
 	}
 
 public:

@@ -15,6 +15,7 @@
 #include "ValorHeroCharacter.h"
 #include "ValorHeroCharacterProxy.h"
 
+DECLARE_CYCLE_STAT(TEXT("ValorGame ~ DetectMouseOver"), STAT_DetectMouseOver, STATGROUP_ValorPlayerController);
 
 AValorPlayerController::AValorPlayerController(const FObjectInitializer& ObjectInitializer)
     : Super(ObjectInitializer)
@@ -39,6 +40,11 @@ void AValorPlayerController::Tick(float DeltaTime)
 
 	//@NOTE - We need this due to (UE-22128).
 	OnWindowReceivedFocus();
+
+	if (GetNetMode() != NM_DedicatedServer)
+	{
+		DetectMouseOver();
+	}
 }
 
 void AValorPlayerController::BeginPlay()
@@ -207,15 +213,96 @@ void AValorPlayerController::ClientValorInitUserInterface_Implementation()
 	}
 }
 
+PRAGMA_DISABLE_OPTIMIZATION
+void AValorPlayerController::DetectMouseOver()
+{
+	const AValorPlayerState* MyPlayerState = Cast<AValorPlayerState>(PlayerState);
+	if (!PlayerState)
+	{
+		// No need to continue of the PlayerState is null.
+		return;
+	}
+
+	SCOPE_CYCLE_COUNTER(STAT_DetectMouseOver);
+
+	// Reset the render depth. If it is still under the mouse at the proper depth it will be hit below.
+	if (CurrentlyHoveredActor.IsValid())
+	{
+		CurrentlyHoveredActor->GetMesh()->SetRenderCustomDepth(false);
+		CurrentlyHoveredActor.Reset();
+	}
+
+	const ULocalPlayer* LocalPlayer = Cast<ULocalPlayer>(Player);
+	if (LocalPlayer && (LocalPlayer->ViewportClient->Viewport && LocalPlayer->ViewportClient->Viewport->IsForegroundWindow()))
+	{
+		/* Detect if we clicked on a unit. If we did, display their stats. If we didn't then clear the unit stat GUI.
+		* We can't simply use the first hit because we don't want to tag invisible enemy units. */
+		TArray<FHitResult> Hits;
+		GetHitResultsUnderCursorByChannel(UEngineTypes::ConvertToTraceType(ECC_ValorClickable), true, Hits);
+
+		if (Hits.Num() > 0)
+		{
+			for (const FHitResult& Result : Hits)
+			{
+				if (!Result.GetActor())
+				{
+					continue;
+				}
+
+				const AValorCharacter* HitActor = Cast<AValorCharacter>(Result.GetActor());
+				if (HitActor &&// The actor is valid.
+					HitActor != GetValorHeroCharacter() && // The actor is not the player actor.
+					(MyPlayerState->GetPlayerTeam() == HitActor->GetTeam() || !HitActor->IsStealthed())) // If the player is on the same team they are hoverable, else they are only hoverable if they are not stealthed.
+				{
+					if (HitActor->GetMesh())
+					{
+						HitActor->GetMesh()->SetRenderCustomDepth(true);
+						HitActor->GetMesh()->CustomDepthStencilValue = static_cast<uint8>(HitActor->GetTeam());
+						CurrentlyHoveredActor = HitActor;
+						break;
+					}
+				}
+			}
+		}
+		else
+		{
+			// Clear stat HUD
+		}
+	}
+}
+PRAGMA_ENABLE_OPTIMIZATION
+
 
 void AValorPlayerController::OnPrimaryAction1Pressed()
 {
 	const ULocalPlayer* LocalPlayer = Cast<ULocalPlayer>(Player);
 	if (LocalPlayer && (LocalPlayer->ViewportClient->Viewport && LocalPlayer->ViewportClient->Viewport->IsForegroundWindow()))
 	{
-		if (GetValorHeroCharacter())
+		/* Detect if we clicked on a unit. If we did, display their stats. If we didn't then clear the unit stat GUI. 
+		 * We can't simply use the first hit because we don't want to tag invisible enemy units. */
+		TArray<FHitResult> Hits;
+		GetHitResultsUnderCursorByChannel(UEngineTypes::ConvertToTraceType(ECC_ValorClickable), true, Hits);
+		
+		if (Hits.Num() > 0)
 		{
-			VALOR_PRINT("Replication test - Player health: %f", GetValorHeroCharacter()->GetStatComponent()->GetHealth(EValorStatType::Current));
+			const AValorPlayerState* MyPlayerState = Cast<AValorPlayerState>(PlayerState);
+			check(MyPlayerState);
+
+			for (const FHitResult& Result : Hits)
+			{
+				const AValorCharacter* HitActor = Cast<AValorCharacter>(Result.GetActor());
+				if (HitActor &&// The actor is valid.
+				    HitActor != GetValorHeroCharacter() && // The actor is not the player actor.
+					(MyPlayerState->GetPlayerTeam() == HitActor->GetTeam() || !HitActor->IsStealthed())) // If the player is on the same team they are clickable, else they are only clickable if they are not stealthed.
+				{
+					VALOR_PRINT("Clicked on clickable unit '%s'.", *GetNameSafe(HitActor));
+					break;
+				}
+			}
+		}
+		else
+		{
+			// Clear stat HUD
 		}
 	}
 }
@@ -653,4 +740,87 @@ void AValorPlayerController::MoveToCursor(const FHitResult& HitResult)
 			}
 		}
 	}
+}
+
+
+bool AValorPlayerController::GetHitResultsUnderCursorByChannel(ETraceTypeQuery TraceChannel, bool bTraceComplex, TArray<FHitResult>& HitResults) const
+{
+	ULocalPlayer* LocalPlayer = Cast<ULocalPlayer>(Player);
+	bool bHit = false;
+	if (LocalPlayer && LocalPlayer->ViewportClient)
+	{
+		FVector2D MousePosition;
+		if (LocalPlayer->ViewportClient->GetMousePosition(MousePosition))
+		{
+			bHit = GetHitResultsAtScreenPosition(MousePosition, TraceChannel, bTraceComplex, HitResults);
+		}
+	}
+
+	return bHit;
+}
+
+bool AValorPlayerController::GetHitResultsUnderCursorForObjects(const TArray<TEnumAsByte<EObjectTypeQuery> > & ObjectTypes, bool bTraceComplex, TArray<FHitResult>& HitResults) const
+{
+	ULocalPlayer* LocalPlayer = Cast<ULocalPlayer>(Player);
+	bool bHit = false;
+	if (LocalPlayer && LocalPlayer->ViewportClient)
+	{
+		FVector2D MousePosition;
+		if (LocalPlayer->ViewportClient->GetMousePosition(MousePosition))
+		{
+			bHit = GetHitResultsAtScreenPosition(MousePosition, ObjectTypes, bTraceComplex, HitResults);
+		}
+	}
+
+	return bHit;
+}
+
+bool AValorPlayerController::GetHitResultsAtScreenPosition(const FVector2D ScreenPosition, const ECollisionChannel TraceChannel, const FCollisionQueryParams& CollisionQueryParams, TArray<FHitResult>& HitResults) const
+{
+	// Early out if we clicked on a HUD hitbox
+	if (GetHUD() != NULL && GetHUD()->GetHitBoxAtCoordinates(ScreenPosition, true))
+	{
+		return false;
+	}
+
+	FVector WorldOrigin;
+	FVector WorldDirection;
+	if (UGameplayStatics::DeprojectScreenToWorld(this, ScreenPosition, WorldOrigin, WorldDirection) == true)
+	{
+		return GetWorld()->LineTraceMultiByChannel(HitResults, WorldOrigin, WorldOrigin + WorldDirection * HitResultTraceDistance, TraceChannel, CollisionQueryParams);
+	}
+
+	return false;
+}
+
+static const FName NAME_ClickableTrace("ClickableTrace");
+
+bool AValorPlayerController::GetHitResultsAtScreenPosition(const FVector2D ScreenPosition, const ECollisionChannel TraceChannel, bool bTraceComplex, TArray<FHitResult>& HitResults) const
+{
+	FCollisionQueryParams CollisionQueryParams(NAME_ClickableTrace, bTraceComplex);
+	return GetHitResultsAtScreenPosition(ScreenPosition, TraceChannel, CollisionQueryParams, HitResults);
+}
+
+bool AValorPlayerController::GetHitResultsAtScreenPosition(const FVector2D ScreenPosition, const ETraceTypeQuery TraceChannel, bool bTraceComplex, TArray<FHitResult>& HitResults) const
+{
+	return GetHitResultsAtScreenPosition(ScreenPosition, UEngineTypes::ConvertToCollisionChannel(TraceChannel), bTraceComplex, HitResults);
+}
+
+bool AValorPlayerController::GetHitResultsAtScreenPosition(const FVector2D ScreenPosition, const TArray<TEnumAsByte<EObjectTypeQuery> > & ObjectTypes, bool bTraceComplex, TArray<FHitResult>& HitResults) const
+{
+	// Early out if we clicked on a HUD hitbox
+	if (GetHUD() != NULL && GetHUD()->GetHitBoxAtCoordinates(ScreenPosition, true))
+	{
+		return false;
+	}
+
+	FVector WorldOrigin;
+	FVector WorldDirection;
+	if (UGameplayStatics::DeprojectScreenToWorld(this, ScreenPosition, WorldOrigin, WorldDirection) == true)
+	{
+		FCollisionObjectQueryParams const ObjParam(ObjectTypes);
+		return GetWorld()->LineTraceMultiByObjectType(HitResults, WorldOrigin, WorldOrigin + WorldDirection * HitResultTraceDistance, ObjParam, FCollisionQueryParams(NAME_ClickableTrace, bTraceComplex));
+	}
+
+	return false;
 }

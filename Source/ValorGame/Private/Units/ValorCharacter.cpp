@@ -34,6 +34,7 @@ AValorCharacter::AValorCharacter(const FObjectInitializer& ObjectInitializer)
 		
 		GetMesh()->SetCollisionEnabled(ECollisionEnabled::NoCollision);
 		GetMesh()->UpdateCollisionProfile();
+		GetMesh()->SetRenderCustomDepth(false);
 
 		UCharacterMovementComponent* MovementComponent = Cast<UCharacterMovementComponent>(GetMovementComponent());
 		if (MovementComponent)
@@ -47,6 +48,11 @@ AValorCharacter::AValorCharacter(const FObjectInitializer& ObjectInitializer)
 	}
 
 	bReplicates = true;
+}
+
+void AValorCharacter::BeginPlay()
+{
+	Super::BeginPlay();
 }
 
 float AValorCharacter::TakeDamage(float DamageAmount, FDamageEvent const& DamageEvent, AController* EventInstigator, AActor* DamageCauser)
@@ -264,4 +270,5 @@ void AValorCharacter::GetLifetimeReplicatedProps(TArray< FLifetimeProperty > & O
 	DOREPLIFETIME(AValorCharacter, CharacterTeam); // Mostly here for minions - player's team will properly replicate through PlayerState.
 	DOREPLIFETIME(AValorCharacter, bTargetable);
 	DOREPLIFETIME(AValorCharacter, bDamageable);
+	DOREPLIFETIME(AValorCharacter, bStealthed);
 }
