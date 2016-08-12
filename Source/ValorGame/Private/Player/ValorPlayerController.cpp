@@ -213,7 +213,6 @@ void AValorPlayerController::ClientValorInitUserInterface_Implementation()
 	}
 }
 
-PRAGMA_DISABLE_OPTIMIZATION
 void AValorPlayerController::DetectMouseOver()
 {
 	const AValorPlayerState* MyPlayerState = Cast<AValorPlayerState>(PlayerState);
@@ -270,8 +269,6 @@ void AValorPlayerController::DetectMouseOver()
 		}
 	}
 }
-PRAGMA_ENABLE_OPTIMIZATION
-
 
 void AValorPlayerController::OnPrimaryAction1Pressed()
 {
