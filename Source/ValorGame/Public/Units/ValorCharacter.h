@@ -81,8 +81,6 @@ public:
 
 public:
 
-	void Initialize(class APlayerState* InPlayerState = nullptr);
-
 	UFUNCTION(BlueprintPure, Category = Stats)
 	bool IsAlive() const;
 
@@ -121,4 +119,8 @@ public:
 
 	/* Called when the player levels up. */
 	virtual void OnLevelUp();
+
+protected:
+
+	void Initialize(class APlayerState* InPlayerState = nullptr);
 };

@@ -24,6 +24,8 @@
 #include "ValorMiscDefinitions.h"		// Random definitions
 #include "ValorCollisionDefinitions.h"	// Collision definitions (trace channels)
 
+#include "ValorVariantData.h"
+
 DECLARE_LOG_CATEGORY_EXTERN(LogValor, Log, All);
 DECLARE_LOG_CATEGORY_EXTERN(LogValorClient, Log, All);
 DECLARE_LOG_CATEGORY_EXTERN(LogValorServer, Log, All);

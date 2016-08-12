@@ -205,9 +205,10 @@ void AValorHeroCharacterProxy::ServerCreatePlayer_Implementation(/*const APlayer
 		SpawnParameters.SpawnCollisionHandlingOverride = ESpawnActorCollisionHandlingMethod::AdjustIfPossibleButAlwaysSpawn;
 
 		Character = Cast<AValorHeroCharacter>(GetWorld()->SpawnActor(CharacterClass, &Location, &Rotation, SpawnParameters));
-		Character->PlayerState = PlayerState;
-		Character->Initialize(PlayerState);
+		Character->Spawn(PlayerState);
 
+
+		//@TODO Move after VG-7
 		CharacterAI = GetWorld()->SpawnActor<AValorHeroAIController>(GetActorLocation(), GetActorRotation());
 		CharacterAI->PlayerState = PlayerState;
 		CharacterAI->Possess(Character);

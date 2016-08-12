@@ -4,7 +4,6 @@
 #include "ValorLaneSpawner.h"
 
 #include "ValorLaneMinion.h"
-#include "ValorMinionController.h"
 
 AValorLaneSpawner::AValorLaneSpawner(const FObjectInitializer& ObjectInitializer)
 	: Super(ObjectInitializer)
@@ -24,25 +23,12 @@ void AValorLaneSpawner::SpawnUnit()
 			FActorSpawnParameters SpawnParameters;
 			SpawnParameters.Owner = this;
 			SpawnParameters.Instigator = Instigator;
-			SpawnParameters.SpawnCollisionHandlingOverride = ESpawnActorCollisionHandlingMethod::AlwaysSpawn;
+			SpawnParameters.SpawnCollisionHandlingOverride = ESpawnActorCollisionHandlingMethod::AdjustIfPossibleButAlwaysSpawn;
 
 			AValorLaneMinion* Minion = Cast<AValorLaneMinion>(GetWorld()->SpawnActor(SpawnClassOrder[UnitSpawnListIndex], &Location, &Rotation, SpawnParameters));
 			check(Minion);
+			Minion->Spawn(nullptr, InitialPoint);
 			Minion->SetTeam(SpawnTeam);
-			Minion->Initialize();
-
-			AValorMinionController* MinionController = GetWorld()->SpawnActor<AValorMinionController>(Location, Rotation);
-			check(MinionController);
-			MinionController->Possess(Minion);
-
-			if (ensureMsgf(Minion->BotBehavior, TEXT("Minion '%s' does not have a BehaviorTree assigned to it. Assign one in the editor."), *GetNameSafe(Minion)) &&
-				ensureMsgf(Minion->BotBehavior->BlackboardAsset, TEXT("The BehaviorTree '%s' attached to Minion '%s' does not have a blackboard. Assign one in the editor."), *GetNameSafe(Minion->BotBehavior), *GetNameSafe(Minion)))
-			{
-				UBlackboardComponent* MinionBlackboardComponent;
-				MinionController->UseBlackboard(Minion->BotBehavior->BlackboardAsset, MinionBlackboardComponent);
-				MinionBlackboardComponent->SetValueAsObject(TEXT("NextMovementPoint"), InitialPoint);
-				MinionController->RunBehaviorTree(Minion->BotBehavior);
-			}
 
 			++UnitSpawnListIndex;
 

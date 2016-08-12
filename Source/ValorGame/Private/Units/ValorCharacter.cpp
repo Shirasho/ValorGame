@@ -207,7 +207,6 @@ void AValorCharacter::Initialize(class APlayerState* InPlayerState)
 {
 	if (HasAuthority())
 	{
-		PlayerState = InPlayerState;
 		if (GetStatComponent())
 		{
 			StatComponent->Initialize(Cast<AValorPlayerState>(InPlayerState));

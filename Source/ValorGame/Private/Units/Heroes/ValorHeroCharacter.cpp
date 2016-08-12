@@ -1,8 +1,9 @@
 // Copyright Shirasho Media 2016. All rights reserved.
 
 #include "ValorGame.h"
-//#include "ValorUserWidget.h"
 #include "ValorHeroCharacter.h"
+
+#include "ValorPlayerState.h"
 
 AValorHeroCharacter::AValorHeroCharacter(const FObjectInitializer& ObjectInitializer)
 	: Super(ObjectInitializer)
@@ -49,6 +50,19 @@ void AValorHeroCharacter::BeginPlay()
 		{
 			UGameplayStatics::PlaySoundAtLocation(this, CharacterDefaults.SpawnSoundCue, GetActorLocation());
 		}
+	}
+}
+
+void AValorHeroCharacter::Spawn(APlayerState* UsePlayerState, const FValorVariantData& ExtraData)
+{
+	if (HasAuthority())
+	{
+		PlayerState = UsePlayerState ? UsePlayerState : PlayerState;
+		Initialize(UsePlayerState);
+
+		// CharacterAI is handled by HeroCharacterProxy due to a required reference
+		// for MoveToLocation. Once VG-7 is implemented we can move the remaining
+		// controller setup here.
 	}
 }
 

@@ -4,11 +4,12 @@
 
 #include "ValorCharacter.h"
 #include "ValorAbilityInterface.h"
+#include "ValorSpawnableInterface.h"
 #include "ValorHeroInitializationProperties.h"
 #include "ValorHeroCharacter.generated.h"
 
 UCLASS(Abstract)
-class AValorHeroCharacter : public AValorCharacter
+class AValorHeroCharacter : public AValorCharacter, public IValorSpawnableInterface
 {
 	GENERATED_UCLASS_BODY()
 
@@ -36,6 +37,10 @@ public:
 	//virtual void EndPlay(const EEndPlayReason::Type EndPlayReason) override;
 
 	//virtual void Tick(float DeltaSeconds) override;
+
+public:
+
+	virtual void Spawn(APlayerState* UsePlayerState = nullptr, const FValorVariantData& ExtraData = FValorVariantData()) override;
 
 public:
 

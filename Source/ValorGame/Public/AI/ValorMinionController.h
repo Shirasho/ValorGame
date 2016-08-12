@@ -5,8 +5,6 @@
 #include "ValorAIController.h"
 #include "ValorMinionController.generated.h"
 
-class AValorMinion;
-
 UCLASS(Config=Game)
 class AValorMinionController : public AValorAIController
 {
@@ -35,7 +33,7 @@ public:
 
 public:
 
-	AValorMinion* GetValorMinion() const;
+	class AValorMinion* GetValorMinion() const;
 
 	FORCEINLINE UBehaviorTreeComponent* GetBehaviorComponent() const
 	{ 
