@@ -10,7 +10,7 @@
 AValorPlayerState::AValorPlayerState(const FObjectInitializer& ObjectInitializer)
 	: Super(ObjectInitializer)
 {
-	PlayerTeam = EValorTeam::None;
+	PlayerTeam = EValorTeam::One;
 	PlayerKills = 0;
 	PlayerDeaths = 0;
 	PlayerAssists = 0;

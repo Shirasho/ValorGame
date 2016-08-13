@@ -15,7 +15,7 @@
 #include "ValorHeroCharacter.h"
 #include "ValorHeroCharacterProxy.h"
 
-DECLARE_CYCLE_STAT(TEXT("ValorGame ~ DetectMouseOver"), STAT_DetectMouseOver, STATGROUP_ValorPlayerController);
+DECLARE_CYCLE_STAT(TEXT("ValorGame ~ DetectMouseOver"), STAT_DetectMouseHover, STATGROUP_ValorPlayerController);
 
 AValorPlayerController::AValorPlayerController(const FObjectInitializer& ObjectInitializer)
     : Super(ObjectInitializer)
@@ -25,6 +25,8 @@ AValorPlayerController::AValorPlayerController(const FObjectInitializer& ObjectI
 
 	PlayerCameraManagerClass = AValorPlayerCameraManager::StaticClass();
 	CheatClass = UValorCheatManager::StaticClass();
+
+	bEnableMouseOverEvents = true;
 
 	bReplicates = true;
 }
@@ -40,11 +42,6 @@ void AValorPlayerController::Tick(float DeltaTime)
 
 	//@NOTE - We need this due to (UE-22128).
 	OnWindowReceivedFocus();
-
-	if (GetNetMode() != NM_DedicatedServer)
-	{
-		DetectMouseOver();
-	}
 }
 
 void AValorPlayerController::BeginPlay()
@@ -213,100 +210,14 @@ void AValorPlayerController::ClientValorInitUserInterface_Implementation()
 	}
 }
 
-void AValorPlayerController::DetectMouseOver()
-{
-	const AValorPlayerState* MyPlayerState = Cast<AValorPlayerState>(PlayerState);
-	if (!PlayerState)
-	{
-		// No need to continue of the PlayerState is null.
-		return;
-	}
-
-	SCOPE_CYCLE_COUNTER(STAT_DetectMouseOver);
-
-	// Reset the render depth. If it is still under the mouse at the proper depth it will be hit below.
-	if (CurrentlyHoveredActor.IsValid())
-	{
-		CurrentlyHoveredActor->GetMesh()->SetRenderCustomDepth(false);
-		CurrentlyHoveredActor.Reset();
-	}
-
-	const ULocalPlayer* LocalPlayer = Cast<ULocalPlayer>(Player);
-	if (LocalPlayer && (LocalPlayer->ViewportClient->Viewport && LocalPlayer->ViewportClient->Viewport->IsForegroundWindow()))
-	{
-		/* Detect if we clicked on a unit. If we did, display their stats. If we didn't then clear the unit stat GUI.
-		* We can't simply use the first hit because we don't want to tag invisible enemy units. */
-		TArray<FHitResult> Hits;
-		GetHitResultsUnderCursorByChannel(UEngineTypes::ConvertToTraceType(ECC_ValorClickable), true, Hits);
-
-		if (Hits.Num() > 0)
-		{
-			for (const FHitResult& Result : Hits)
-			{
-				if (!Result.GetActor())
-				{
-					continue;
-				}
-
-				const AValorCharacter* HitActor = Cast<AValorCharacter>(Result.GetActor());
-				if (HitActor &&// The actor is valid.
-					HitActor != GetValorHeroCharacter() && // The actor is not the player actor.
-					(MyPlayerState->GetPlayerTeam() == HitActor->GetTeam() || !HitActor->IsStealthed())) // If the player is on the same team they are hoverable, else they are only hoverable if they are not stealthed.
-				{
-					if (HitActor->GetMesh())
-					{
-						HitActor->GetMesh()->SetRenderCustomDepth(true);
-						HitActor->GetMesh()->CustomDepthStencilValue = static_cast<uint8>(HitActor->GetTeam());
-						CurrentlyHoveredActor = HitActor;
-						break;
-					}
-				}
-			}
-		}
-		else
-		{
-			// Clear stat HUD
-		}
-	}
-}
-
 void AValorPlayerController::OnPrimaryAction1Pressed()
 {
-	const ULocalPlayer* LocalPlayer = Cast<ULocalPlayer>(Player);
-	if (LocalPlayer && (LocalPlayer->ViewportClient->Viewport && LocalPlayer->ViewportClient->Viewport->IsForegroundWindow()))
-	{
-		/* Detect if we clicked on a unit. If we did, display their stats. If we didn't then clear the unit stat GUI. 
-		 * We can't simply use the first hit because we don't want to tag invisible enemy units. */
-		TArray<FHitResult> Hits;
-		GetHitResultsUnderCursorByChannel(UEngineTypes::ConvertToTraceType(ECC_ValorClickable), true, Hits);
-		
-		if (Hits.Num() > 0)
-		{
-			const AValorPlayerState* MyPlayerState = Cast<AValorPlayerState>(PlayerState);
-			check(MyPlayerState);
 
-			for (const FHitResult& Result : Hits)
-			{
-				const AValorCharacter* HitActor = Cast<AValorCharacter>(Result.GetActor());
-				if (HitActor &&// The actor is valid.
-				    HitActor != GetValorHeroCharacter() && // The actor is not the player actor.
-					(MyPlayerState->GetPlayerTeam() == HitActor->GetTeam() || !HitActor->IsStealthed())) // If the player is on the same team they are clickable, else they are only clickable if they are not stealthed.
-				{
-					VALOR_PRINT("Clicked on clickable unit '%s'.", *GetNameSafe(HitActor));
-					break;
-				}
-			}
-		}
-		else
-		{
-			// Clear stat HUD
-		}
-	}
 }
 
 void AValorPlayerController::OnPrimaryAction1Released()
 {
-
+	
 }
 
 void AValorPlayerController::OnPrimaryAction2Pressed()

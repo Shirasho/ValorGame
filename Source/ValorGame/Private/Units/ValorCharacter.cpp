@@ -30,6 +30,12 @@ AValorCharacter::AValorCharacter(const FObjectInitializer& ObjectInitializer)
 		AbilityHitbox->ShapeColor = FColor::Yellow;
 		AbilityHitbox->SetupAttachment(RootComponent);
 
+		GetCapsuleComponent()->SetCollisionResponseToChannel(ECollisionChannel::ECC_Visibility, ECollisionResponse::ECR_Block);
+		GetCapsuleComponent()->OnBeginCursorOver.AddDynamic(this, &AValorCharacter::OnMouseEnter);
+		GetCapsuleComponent()->OnEndCursorOver.AddDynamic(this, &AValorCharacter::OnMouseLeave);
+		GetCapsuleComponent()->OnClicked.AddDynamic(this, &AValorCharacter::OnMouseDown);
+		GetCapsuleComponent()->OnReleased.AddDynamic(this, &AValorCharacter::OnMouseUp);
+
 		GetMovementComponent()->SetJumpAllowed(false);
 		
 		GetMesh()->SetCollisionEnabled(ECollisionEnabled::NoCollision);
@@ -48,6 +54,8 @@ AValorCharacter::AValorCharacter(const FObjectInitializer& ObjectInitializer)
 	}
 
 	bReplicates = true;
+	bAlwaysRelevant = true;
+	bNetLoadOnClient = false;
 }
 
 void AValorCharacter::BeginPlay()
@@ -230,6 +238,35 @@ void AValorCharacter::OnLevelUp()
 {
 	//StatComponent->RecalculateStats(false, true);
 }
+
+void AValorCharacter::OnMouseEnter(UPrimitiveComponent* TouchedComponent)
+{
+	//@TODO Is there a better way to compare whether the character's PlayerState is the player's?
+	if (GetMesh() && PlayerState != GetGameInstance()->GetFirstGamePlayer()->PlayerController->PlayerState)
+	{
+		GetMesh()->SetRenderCustomDepth(true);
+		GetMesh()->CustomDepthStencilValue = static_cast<uint8>(GetTeam()) - 1;
+	}
+}
+
+void AValorCharacter::OnMouseLeave(UPrimitiveComponent* TouchedComponent)
+{
+	if (GetMesh())
+	{
+		GetMesh()->SetRenderCustomDepth(false);
+	}
+}
+
+void AValorCharacter::OnMouseDown(UPrimitiveComponent* TouchedComponent, FKey ButtonPressed)
+{
+
+}
+
+void AValorCharacter::OnMouseUp(UPrimitiveComponent* TouchedComponent, FKey ButtonPressed)
+{
+
+}
+
 
 float AValorCharacter::PlayAnimMontage(class UAnimMontage* AnimMontage, float InPlayRate, FName StartSectionName)
 {

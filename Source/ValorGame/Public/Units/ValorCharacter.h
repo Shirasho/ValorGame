@@ -3,12 +3,15 @@
 #pragma once
 
 #include "ValorTypes.h"
+#include "ValorClickableInterface.h"
+#include "ValorHoverableInterface.h"
+#include "ValorUnitInterface.h"
 #include "ValorCharacter.generated.h"
 
 DECLARE_STATS_GROUP(TEXT("ValorGame"), STATGROUP_ValorCharacter, STATCAT_Advanced);
 
 UCLASS(Abstract)
-class AValorCharacter : public ACharacter
+class AValorCharacter : public ACharacter, public IValorUnitInterface, public IValorClickableInterface, public IValorHoverableInterface
 {
 	GENERATED_UCLASS_BODY()
 
@@ -85,7 +88,7 @@ public:
 	bool IsAlive() const;
 
 	UFUNCTION(BlueprintPure, Category = Stats)
-	EValorTeam GetTeam() const;
+	EValorTeam GetTeam() const override;
 
 	void SetTeam(EValorTeam NewTeam)
 	{
@@ -93,7 +96,7 @@ public:
 	}
 
 	UFUNCTION(BlueprintPure, Category = Stats)
-	bool IsStealthed() const
+	bool IsStealthed() const override
 	{
 		return bStealthed;
 	}
@@ -122,5 +125,14 @@ public:
 
 protected:
 
-	void Initialize(class APlayerState* InPlayerState = nullptr);
+	virtual void Initialize(class APlayerState* InPlayerState = nullptr);
+
+	UFUNCTION()
+	virtual void OnMouseEnter(UPrimitiveComponent* TouchedComponent) override;
+	UFUNCTION()
+	virtual void OnMouseLeave(UPrimitiveComponent* TouchedComponent) override;
+	UFUNCTION()
+	virtual void OnMouseDown(UPrimitiveComponent* TouchedComponent, FKey ButtonPressed) override;
+	UFUNCTION()
+	virtual void OnMouseUp(UPrimitiveComponent* TouchedComponent, FKey ButtonPressed) override;
 };

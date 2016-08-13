@@ -19,10 +19,6 @@ protected:
 
 private:
 
-	TWeakObjectPtr<class AValorCharacter> CurrentlyHoveredActor;
-
-private:
-
 	/* Timer used to keep attempting to start an online game until it works. */
 	FTimerHandle TimerHandle_ClientStartOnlineGame;
 
@@ -223,8 +219,4 @@ private:
 
 	UFUNCTION(Client, Reliable)
 	void ClientValorInitUserInterface();
-
-private:
-
-	void DetectMouseOver();
 };
