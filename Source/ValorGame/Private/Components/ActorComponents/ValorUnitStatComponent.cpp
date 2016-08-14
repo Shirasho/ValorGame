@@ -90,7 +90,7 @@ void UValorUnitStatComponent::RecoverStats()
 float UValorUnitStatComponent::GetMana(EValorStatType StatType) const
 {
 	// If you hit this it means the DataTable is missing the row or the appropriate number of columns.
-	if (ensure(BaseManaPerLevel.Num() > GetUnitLevel()))
+	if (ensure(BaseManaPerLevel.IsValidIndex(GetUnitLevel()-1)))
 	{
 		switch (StatType)
 		{
@@ -118,7 +118,7 @@ void UValorUnitStatComponent::AdjustBonusMana(float Value)
 float UValorUnitStatComponent::GetManaRegen(EValorStatType StatType) const
 {
 	// If you hit this it means the DataTable is missing the row or the appropriate number of columns.
-	if (ensure(BaseManaRegenPerLevel.Num() > GetUnitLevel()))
+	if (ensure(BaseManaRegenPerLevel.IsValidIndex(GetUnitLevel()-1)))
 	{
 		switch (StatType)
 		{
@@ -155,7 +155,7 @@ void UValorUnitStatComponent::AdjustBonusCooldownReduction(float Value)
 float UValorUnitStatComponent::GetMovementSpeed(EValorStatType StatType) const
 {
 	// If you hit this it means the DataTable is missing the row or the appropriate number of columns.
-	if (ensure(BaseMovementSpeedPerLevel.Num() > GetUnitLevel()))
+	if (ensure(BaseMovementSpeedPerLevel.IsValidIndex(GetUnitLevel()-1)))
 	{
 		switch (StatType)
 		{
@@ -190,6 +190,140 @@ uint8 UValorUnitStatComponent::GetUnitLevel() const
 void UValorUnitStatComponent::SetUnitLevel(uint8 Value)
 {
 	UnitLevel = Value;
+}
+
+float UValorUnitStatComponent::GetHealth(EValorStatType StatType) const
+{
+	// If you hit this it means the DataTable is missing the row or the appropriate number of columns.
+	if (ensure(BaseHealthPerLevel.IsValidIndex(GetUnitLevel()-1)))
+	{
+		switch (StatType)
+		{
+			case EValorStatType::Base: return BaseHealthPerLevel[GetUnitLevel()-1];
+			case EValorStatType::Bonus: return BonusHealth;
+			case EValorStatType::Current: return Health;
+			case EValorStatType::Max: return BaseHealthPerLevel[GetUnitLevel() - 1] + BonusHealth;
+		}
+	}
+	return 0.f;
+}
+
+float UValorUnitStatComponent::GetHealthRegen(EValorStatType StatType) const
+{
+	// If you hit this it means the DataTable is missing the row or the appropriate number of columns.
+	if (ensure(BaseHealthRegenPerLevel.IsValidIndex(GetUnitLevel()-1)))
+	{
+		switch (StatType)
+		{
+			case EValorStatType::Base: return BaseHealthRegenPerLevel[GetUnitLevel() - 1];
+			case EValorStatType::Bonus: return BonusHealthRegen;
+			case EValorStatType::Current: return BaseHealthRegenPerLevel[GetUnitLevel() - 1] + BonusHealthRegen;
+			case EValorStatType::Max: return -1; // Health regen has no maximum value.
+		}
+	}
+	return 0.f;
+}
+
+float UValorUnitStatComponent::GetPhysicalDamage(EValorStatType StatType) const
+{
+	// If you hit this it means the DataTable is missing the row or the appropriate number of columns.
+	if (ensure(BasePhysicalDamagePerLevel.Num()))
+	{
+		switch (StatType)
+		{
+			case EValorStatType::Base: return BasePhysicalDamagePerLevel[GetUnitLevel() - 1];
+			case EValorStatType::Bonus: return BonusPhysicalDamage;
+			case EValorStatType::Current: return BasePhysicalDamagePerLevel[GetUnitLevel() - 1] + BonusPhysicalDamage;
+			case EValorStatType::Max: return -1; // Physical damage has no maximum value.
+		}
+	}
+
+	return 0.f;
+}
+
+float UValorUnitStatComponent::GetMagicalDamage(EValorStatType StatType) const
+{
+	// If you hit this it means the DataTable is missing the row or the appropriate number of columns.
+	if (ensure(BaseMagicalDamagePerLevel.IsValidIndex(GetUnitLevel()-1)))
+	{
+		switch (StatType)
+		{
+			case EValorStatType::Base: return BaseMagicalDamagePerLevel[GetUnitLevel() - 1];
+			case EValorStatType::Bonus: return BonusMagicalDamage;
+			case EValorStatType::Current: return BaseMagicalDamagePerLevel[GetUnitLevel() - 1] + BonusMagicalDamage;
+			case EValorStatType::Max: return -1; // Physical damage has no maximum value.
+		}
+	}
+
+	return 0.f;
+}
+
+float UValorUnitStatComponent::GetPhysicalResist(EValorStatType StatType) const
+{
+	// If you hit this it means the DataTable is missing the row or the appropriate number of columns.
+	if (ensure(BasePhysicalResistPerLevel.IsValidIndex(GetUnitLevel()-1)))
+	{
+		switch (StatType)
+		{
+			case EValorStatType::Base: return BasePhysicalResistPerLevel[GetUnitLevel() - 1];
+			case EValorStatType::Bonus: return BonusPhysicalResist;
+			case EValorStatType::Current: return BasePhysicalResistPerLevel[GetUnitLevel() - 1] + BonusPhysicalResist;
+			case EValorStatType::Max: return -1; // Physical resist has no maximum value.
+		}
+	}
+
+	return 0.f;
+}
+
+float UValorUnitStatComponent::GetMagicalResist(EValorStatType StatType) const
+{
+	// If you hit this it means the DataTable is missing the row or the appropriate number of columns.
+	if (ensure(BaseMagicalResistPerLevel.IsValidIndex(GetUnitLevel()-1)))
+	{
+		switch (StatType)
+		{
+			case EValorStatType::Base: return BaseMagicalResistPerLevel[GetUnitLevel() - 1];
+			case EValorStatType::Bonus: return BonusMagicalResist;
+			case EValorStatType::Current: return BaseMagicalResistPerLevel[GetUnitLevel() - 1] + BonusMagicalResist;
+			case EValorStatType::Max: return -1; // Magical resist has no maximum value.
+		}
+	}
+
+	return 0.f;
+}
+
+float UValorUnitStatComponent::GetAttackSpeed(EValorStatType StatType) const
+{
+	// If you hit this it means the DataTable is missing the row or the appropriate number of columns.
+	if (ensure(BaseAttackSpeedPerLevel.IsValidIndex(GetUnitLevel()-1)))
+	{
+		switch (StatType)
+		{
+			case EValorStatType::Base: return BaseAttackSpeedPerLevel[GetUnitLevel() - 1];
+			case EValorStatType::Bonus: return BonusAttackSpeed;
+			case EValorStatType::Current: return BaseAttackSpeedPerLevel[GetUnitLevel() - 1] + BonusAttackSpeed;
+			case EValorStatType::Max: return 2.f; // Magical resist has no maximum value.
+		}
+	}
+
+	return 0.f;
+}
+
+float UValorUnitStatComponent::GetAttackRange(EValorStatType StatType) const
+{
+	// If you hit this it means the DataTable is missing the row or the appropriate number of columns.
+	if (ensure(BaseAttackRangePerLevel.IsValidIndex(GetUnitLevel()-1)))
+	{
+		switch (StatType)
+		{
+			case EValorStatType::Base: return BaseAttackRangePerLevel[GetUnitLevel() - 1];
+			case EValorStatType::Bonus: return BonusAttackRange;
+			case EValorStatType::Current: return BaseAttackRangePerLevel[GetUnitLevel() - 1] + BonusAttackRange;
+			case EValorStatType::Max: return -1; // Magical resist has no maximum value.
+		}
+	}
+
+	return 0.f;
 }
 
 void UValorUnitStatComponent::CheckForLevelUp()

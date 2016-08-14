@@ -5,7 +5,7 @@
 #include "ValorTypes.h"
 #include "ValorUnitInterface.generated.h"
 
-UINTERFACE(MinimalAPI)
+UINTERFACE(MinimalAPI, BlueprintType, meta=(CannotImplementInterfaceInBlueprint))
 class UValorUnitInterface : public UInterface
 {
 	GENERATED_UINTERFACE_BODY()

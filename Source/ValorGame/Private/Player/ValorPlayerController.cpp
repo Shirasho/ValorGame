@@ -225,20 +225,18 @@ void AValorPlayerController::OnPrimaryAction2Pressed()
 	const ULocalPlayer* LocalPlayer = Cast<ULocalPlayer>(Player);
 	if (LocalPlayer && (LocalPlayer->ViewportClient->Viewport && LocalPlayer->ViewportClient->Viewport->IsForegroundWindow()))
 	{
-	/* There would be more tests here. For prototyping
-	* we are simply going to move a character. */
+		/* There would be more tests here. For prototyping
+		* we are simply going to move a character. */
 
-	// Trace to see what is under the mouse cursor
-		FHitResult Hit;
-		GetHitResultUnderCursor(ECC_Visibility, false, Hit);
+		// Trace to see what is under the mouse cursor
+		FHitResult HitResult;
+		GetHitResultUnderCursor(ECC_Visibility, false, HitResult);
 
-		if (Hit.bBlockingHit)
+		if (HitResult.bBlockingHit)
 		{
-			ServerMoveToCursor(Hit);
-
 			if (GetValorHeroCharacterProxy())
 			{
-				GetValorHeroCharacterProxy()->OnCharacterMovement();
+				GetValorHeroCharacterProxy()->OnCharacterMovement(HitResult);
 			}
 
 			GetWorld()->GetTimerManager().SetTimer(TimerHandle_MoveToCursor, this, &AValorPlayerController::OnPrimaryAction2Pressed, GetWorldSettings()->GetEffectiveTimeDilation() * 0.45f, false);
@@ -621,35 +619,6 @@ void AValorPlayerController::ServerCheat_Implementation(const FString& Message)
 		ClientMessage(ConsoleCommand(Message));
 	}
 }
-
-bool AValorPlayerController::ServerMoveToCursor_Validate(const FHitResult& HitResult)
-{
-	return true;
-}
-
-void AValorPlayerController::ServerMoveToCursor_Implementation(const FHitResult& HitResult)
-{
-	MoveToCursor(HitResult);
-}
-
-void AValorPlayerController::MoveToCursor(const FHitResult& HitResult)
-{
-	if (HasAuthority())
-	{
-		AValorHeroCharacterProxy* Pawn = Cast<AValorHeroCharacterProxy>(GetPawn());
-		if (Pawn)
-		{
-			UNavigationSystem* NavigationSystem = GetWorld()->GetNavigationSystem();
-			const float Distance = FVector::Dist(HitResult.Location, Pawn->GetActorLocation());
-
-			if (NavigationSystem && (Distance > 10.f))
-			{
-				Pawn->MoveToLocation(this, HitResult.Location);
-			}
-		}
-	}
-}
-
 
 bool AValorPlayerController::GetHitResultsUnderCursorByChannel(ETraceTypeQuery TraceChannel, bool bTraceComplex, TArray<FHitResult>& HitResults) const
 {

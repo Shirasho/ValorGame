@@ -13,11 +13,6 @@ class AValorMinion : public AValorCharacter, public IValorSpawnableInterface
 
 public:
 
-	UPROPERTY(EditAnywhere, Category = Behavior)
-	class UBehaviorTree* BotBehavior;
-
-public:
-
 	//virtual void PreInitializeComponents() override;
 
 	//virtual void PostInitializeComponents() override;

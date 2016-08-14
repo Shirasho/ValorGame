@@ -4,7 +4,7 @@
 
 #include "ValorSpawnableInterface.generated.h"
 
-UINTERFACE(MinimalAPI)
+UINTERFACE(MinimalAPI, BlueprintType, meta = (CannotImplementInterfaceInBlueprint))
 class UValorSpawnableInterface : public UInterface
 {
 	GENERATED_UINTERFACE_BODY()

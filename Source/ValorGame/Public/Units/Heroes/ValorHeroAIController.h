@@ -10,6 +10,10 @@ class AValorHeroAIController : public AAIController
 {
 	GENERATED_UCLASS_BODY()
 
+protected:
+
+	UBlackboardComponent* HeroBlackboardComponent;
+
 public:
 
 	//virtual void PreInitializeComponents() override;
@@ -21,4 +25,13 @@ public:
 	//virtual void EndPlay(const EEndPlayReason::Type EndPlayReason) override;
 
 	//virtual void Tick(float DeltaSeconds) override;
+
+public:
+
+	FORCEINLINE UBlackboardComponent* GetBlackboardComponent() const
+	{
+		return HeroBlackboardComponent;
+	}
+
+	void SetBlackboardComponent(UBlackboardComponent* InBlackboardComponent);
 };

@@ -7,3 +7,8 @@ AValorHeroAIController::AValorHeroAIController(const FObjectInitializer& ObjectI
 	: Super(ObjectInitializer)
 {
 }
+
+void AValorHeroAIController::SetBlackboardComponent(UBlackboardComponent* InBlackboardComponent)
+{
+	HeroBlackboardComponent = InBlackboardComponent;
+}

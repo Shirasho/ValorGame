@@ -4,7 +4,7 @@
 
 #include "ValorHoverableInterface.generated.h"
 
-UINTERFACE(MinimalAPI)
+UINTERFACE(MinimalAPI, BlueprintType, meta = (CannotImplementInterfaceInBlueprint))
 class UValorHoverableInterface : public UInterface
 {
 	GENERATED_UINTERFACE_BODY()

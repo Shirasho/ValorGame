@@ -17,6 +17,9 @@ class AValorCharacter : public ACharacter, public IValorUnitInterface, public IV
 
 protected:
 
+	UPROPERTY(EditAnywhere, Category = Behavior)
+	class UBehaviorTree* BotBehavior;
+
 	/* The hitbox used for registering ability hits on this character. */
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, meta = (AllowPrivateAccess = "true"), Category = Character)
 	UCapsuleComponent* AbilityHitbox;

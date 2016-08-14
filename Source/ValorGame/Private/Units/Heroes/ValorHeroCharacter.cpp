@@ -4,6 +4,7 @@
 #include "ValorHeroCharacter.h"
 
 #include "ValorPlayerState.h"
+#include "ValorHeroAIController.h"
 
 AValorHeroCharacter::AValorHeroCharacter(const FObjectInitializer& ObjectInitializer)
 	: Super(ObjectInitializer)
@@ -60,9 +61,19 @@ void AValorHeroCharacter::Spawn(APlayerState* UsePlayerState, const FValorVarian
 		PlayerState = UsePlayerState ? UsePlayerState : PlayerState;
 		Initialize(UsePlayerState);
 
-		// CharacterAI is handled by HeroCharacterProxy due to a required reference
-		// for MoveToLocation. Once VG-7 is implemented we can move the remaining
-		// controller setup here.
+		AIController = GetWorld()->SpawnActor<AValorHeroAIController>(GetActorLocation(), GetActorRotation());
+		check(AIController);
+		AIController->PlayerState = PlayerState;
+		AIController->Possess(this);
+		if (ensureMsgf(BotBehavior, TEXT("Hero '%s' does not have a BehaviorTree assigned to it. Assign one in the editor."), *GetNameSafe(this)) &&
+			ensureMsgf(BotBehavior->BlackboardAsset, TEXT("The BehaviorTree '%s' attached to Minion '%s' does not have a blackboard. Assign one in the editor."), *GetNameSafe(BotBehavior), *GetNameSafe(this)))
+		{
+			UBlackboardComponent* HeroBlackboardComponent;
+			AIController->UseBlackboard(BotBehavior->BlackboardAsset, HeroBlackboardComponent);
+			AIController->SetBlackboardComponent(HeroBlackboardComponent);
+			AIController->RunBehaviorTree(BotBehavior);
+		}
+		Controller = AIController;
 	}
 }
 

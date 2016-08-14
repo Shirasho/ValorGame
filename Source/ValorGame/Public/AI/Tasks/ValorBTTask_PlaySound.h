@@ -2,7 +2,7 @@
 
 #pragma once
 
-#include "BehaviorTree/BTTaskNode.h"
+#include "BehaviorTree/Tasks/BTTask_BlackboardBase.h"
 #include "ValorBTTask_PlaySound.generated.h"
 
 UCLASS()

@@ -27,10 +27,12 @@ int32 UValorHeroStatComponent::GetExperience() const
 
 	const AValorPlayerState* ValorPlayerState = Cast<AValorPlayerState>(Owner->PlayerState);
 
-	// For now all AI Hero units will have/require a PlayerState.
-	check(ValorPlayerState);
-
-	return ValorPlayerState->GetPlayerExperience();
+	if (ensure(ValorPlayerState))
+	{
+		UValorHeroStatComponent* MutableThis = const_cast<UValorHeroStatComponent*>(this);
+		MutableThis->Experience = ValorPlayerState->GetPlayerExperience();
+	}
+	return Experience;
 }
 void UValorHeroStatComponent::AdjustExperience(int32 Value)
 {
@@ -63,8 +65,9 @@ uint8 UValorHeroStatComponent::GetUnitLevel() const
 	const AValorPlayerState* ValorPlayerState = Cast<AValorPlayerState>(Owner->PlayerState);
 	if (ensure(ValorPlayerState))
 	{
-		return ValorPlayerState->GetPlayerLevel();
+		UValorHeroStatComponent* MutableThis = const_cast<UValorHeroStatComponent*>(this);
+		MutableThis->UnitLevel = ValorPlayerState->GetPlayerLevel();
 	}
 
-	return Experience;
+	return UnitLevel;
 }

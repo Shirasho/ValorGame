@@ -63,9 +63,6 @@ public:
 	UFUNCTION(Server, Reliable, WithValidation)
 	void ServerCreatePlayer(/*const APlayerState* ControllerPlayerState*/);
 
-	/* Used by the AIController to move. */
-	void MoveToLocation(const class AValorPlayerController* InController, const FVector& Location);
-
 public: // PreServer
 
 	void OnCameraCenterPressed();
@@ -75,12 +72,15 @@ public: // PostServer
 
 	/* Called when the player has clicked a valid movement location after the
 	* request has been sent to the server. */
-	void OnCharacterMovement();
+	void OnCharacterMovement(const FHitResult& HitResult);
+
+	/* Displays the movement decal when the player clicks on a valid movement location. */
+	void DisplayMovementDecal(const FHitResult& HitResult);
 
 protected:
 
-	/* Displays the movement decal when the player clicks on a valid movement location. */
-	void DisplayMovementDecal();
+	UFUNCTION(Server, Reliable, WithValidation)
+	virtual void ServerOnCharacterMovement(const FHitResult& HitResult);
 
 private:
 

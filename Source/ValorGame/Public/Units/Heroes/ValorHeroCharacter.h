@@ -13,11 +13,18 @@ class AValorHeroCharacter : public AValorCharacter, public IValorSpawnableInterf
 {
 	GENERATED_UCLASS_BODY()
 
+	// Anything that actually DOES something
+	// outside of BeginPlay() must go through
+	// the character proxy.
+	friend class AValorHeroCharacterProxy;
+
 protected:
 
 	/* Default properties that apply to Heroes. */
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Replicated, Category = Defaults)
 	FValorHeroInitializationProperties CharacterDefaults;
+
+	class AValorHeroAIController* AIController;
 
 protected:
 

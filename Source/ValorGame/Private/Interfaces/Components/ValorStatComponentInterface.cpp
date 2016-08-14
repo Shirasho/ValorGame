@@ -71,6 +71,24 @@ void IValorStatComponentInterface::AdjustBonusMagicalResist(float Value)
 
 }
 
+float IValorStatComponentInterface::GetAttackSpeed(EValorStatType StatType) const
+{
+	return 0.f;
+}
+void IValorStatComponentInterface::AdjustBonusAttackSpeed(float Value)
+{
+	
+}
+
+float IValorStatComponentInterface::GetAttackRange(EValorStatType StatType) const
+{
+	return 0.f;
+}
+void IValorStatComponentInterface::AdjustBonusAttackRange(float Value)
+{
+
+}
+
 void IValorStatComponentInterface::Initialize(const class AValorPlayerState* PlayerState)
 {
 

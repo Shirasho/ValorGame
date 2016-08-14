@@ -82,15 +82,6 @@ public:
 	UFUNCTION(Server, Reliable, WithValidation)
 	void ServerCheat(const FString& Message);
 
-protected:
-
-	/* [Client -> Server] Asks the server to move the player to the specified location. */
-	UFUNCTION(Server, Reliable, WithValidation)
-	void ServerMoveToCursor(const FHitResult& HitResult);
-
-	/* [Server] Move the player to the specified location. */
-	void MoveToCursor(const FHitResult& HitResult);
-
 public:
 
 	UFUNCTION(BlueprintCallable, Category = Input)

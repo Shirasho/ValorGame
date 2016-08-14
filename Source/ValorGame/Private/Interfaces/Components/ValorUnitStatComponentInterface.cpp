@@ -21,16 +21,16 @@ void IValorUnitStatComponentInterface::AdjustMana(float Value)
 {
 
 }
+void IValorUnitStatComponentInterface::AdjustBonusMana(float Value)
+{
+
+}
 
 float IValorUnitStatComponentInterface::GetManaRegen(EValorStatType StatType) const
 {
 	return 0.f;
 }
-void IValorUnitStatComponentInterface::SetManaRegen(float Value)
-{
-
-}
-void IValorUnitStatComponentInterface::AdjustManaRegen(float Value)
+void IValorUnitStatComponentInterface::AdjustBonusManaRegen(float Value)
 {
 
 }
@@ -39,11 +39,7 @@ float IValorUnitStatComponentInterface::GetCooldownReduction(EValorStatType Stat
 {
 	return 0.f;
 }
-void IValorUnitStatComponentInterface::SetCooldownReduction(float Value)
-{
-
-}
-void IValorUnitStatComponentInterface::AdjustCooldownReduction(float Value)
+void IValorUnitStatComponentInterface::AdjustBonusCooldownReduction(float Value)
 {
 
 }
@@ -52,11 +48,7 @@ float IValorUnitStatComponentInterface::GetMovementSpeed(EValorStatType StatType
 {
 	return 0.f;
 }
-void IValorUnitStatComponentInterface::SetMovementSpeed(float Value)
-{
-
-}
-void IValorUnitStatComponentInterface::AdjustMovementSpeed(float Value)
+void IValorUnitStatComponentInterface::AdjustBonusMovementSpeed(float Value)
 {
 
 }
@@ -64,10 +56,6 @@ void IValorUnitStatComponentInterface::AdjustMovementSpeed(float Value)
 int32 IValorUnitStatComponentInterface::GetExperience() const
 {
 	return 0;
-}
-void IValorUnitStatComponentInterface::SetExperience(int32 Value)
-{
-
 }
 void IValorUnitStatComponentInterface::AdjustExperience(int32 Value)
 {

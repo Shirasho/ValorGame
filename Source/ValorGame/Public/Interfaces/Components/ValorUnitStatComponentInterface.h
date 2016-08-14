@@ -18,21 +18,18 @@ class IValorUnitStatComponentInterface
 	virtual float GetMana(EValorStatType StatType) const;
 	virtual void SetMana(float Value);
 	virtual void AdjustMana(float Value);
+	virtual void AdjustBonusMana(float Value);
 
 	virtual float GetManaRegen(EValorStatType StatType) const;
-	virtual void SetManaRegen(float Value);
-	virtual void AdjustManaRegen(float Value);
+	virtual void AdjustBonusManaRegen(float Value);
 
 	virtual float GetCooldownReduction(EValorStatType StatType) const;
-	virtual void SetCooldownReduction(float Value);
-	virtual void AdjustCooldownReduction(float Value);
+	virtual void AdjustBonusCooldownReduction(float Value);
 
 	virtual float GetMovementSpeed(EValorStatType StatType) const;
-	virtual void SetMovementSpeed(float Value);
-	virtual void AdjustMovementSpeed(float Value);
+	virtual void AdjustBonusMovementSpeed(float Value);
 
 	virtual int32 GetExperience() const;
-	virtual void SetExperience(int32 Value);
 	virtual void AdjustExperience(int32 Value);
 
 	virtual uint8 GetUnitLevel() const;

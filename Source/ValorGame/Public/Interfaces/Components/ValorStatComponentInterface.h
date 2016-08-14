@@ -41,5 +41,11 @@ class IValorStatComponentInterface
 	virtual float GetMagicalResist(EValorStatType StatType) const;
 	virtual void AdjustBonusMagicalResist(float Value);
 
+	virtual float GetAttackSpeed(EValorStatType StatType) const;
+	virtual void AdjustBonusAttackSpeed(float Value);
+
+	virtual float GetAttackRange(EValorStatType StatType) const;
+	virtual void AdjustBonusAttackRange(float Value);
+
 	virtual void Initialize(const class AValorPlayerState* PlayerState);
 };

@@ -4,7 +4,6 @@
 #include "ValorHeroCharacterProxy.h"
 
 #include "ValorHeroCharacter.h"
-#include "ValorHeroAIController.h"
 #include "ValorPlayerState.h"
 
 #define VALOR_CURSOR_ZONE_SIZE 50
@@ -72,26 +71,16 @@ AValorHeroCharacter* AValorHeroCharacterProxy::GetValorHeroCharacter() const
 	return Character;
 }
 
-void AValorHeroCharacterProxy::MoveToLocation(const AValorPlayerController* InController, const FVector& Location)
-{
-	if (CharacterAI)
-	{
-		CharacterAI->MoveToLocation(Location, 10.f, true, true, false, false);
-	}
-}
-
-void AValorHeroCharacterProxy::DisplayMovementDecal()
+void AValorHeroCharacterProxy::DisplayMovementDecal(const FHitResult& HitResult)
 {
 	if (Character && Character->GetValorHeroInitilizationProperties().ClickCursorDecal)
 	{
 		if (APlayerController* PlayerController = Cast<APlayerController>(GetController()))
 		{
-			FHitResult TraceHitResult;
-			PlayerController->GetHitResultUnderCursor(ECC_Visibility, true, TraceHitResult);
-			FVector CursorFV = TraceHitResult.ImpactNormal;
+			FVector CursorFV = HitResult.ImpactNormal;
 			FRotator CursorR = CursorFV.Rotation();
 
-			UGameplayStatics::SpawnDecalAtLocation(this, Character->GetValorHeroInitilizationProperties().ClickCursorDecal, FVector(16.f, 32.f, 32.f), TraceHitResult.Location, CursorR, 0.25f);
+			UGameplayStatics::SpawnDecalAtLocation(this, Character->GetValorHeroInitilizationProperties().ClickCursorDecal, FVector(16.f, 32.f, 32.f), HitResult.Location, CursorR, 0.25f);
 		}
 	}
 }
@@ -161,10 +150,10 @@ void AValorHeroCharacterProxy::ProcessCameraInput(float DeltaSeconds)
 	}
 }
 
-
-void AValorHeroCharacterProxy::OnCharacterMovement()
+void AValorHeroCharacterProxy::OnCharacterMovement(const FHitResult& HitResult)
 {
-	DisplayMovementDecal();
+	DisplayMovementDecal(HitResult);
+	ServerOnCharacterMovement(HitResult);
 }
 
 void AValorHeroCharacterProxy::OnCameraCenterPressed()
@@ -206,15 +195,26 @@ void AValorHeroCharacterProxy::ServerCreatePlayer_Implementation(/*const APlayer
 
 		Character = Cast<AValorHeroCharacter>(GetWorld()->SpawnActor(CharacterClass, &Location, &Rotation, SpawnParameters));
 		Character->Spawn(PlayerState);
-
-
-		//@TODO Move after VG-7
-		CharacterAI = GetWorld()->SpawnActor<AValorHeroAIController>(GetActorLocation(), GetActorRotation());
-		CharacterAI->PlayerState = PlayerState;
-		CharacterAI->Possess(Character);
 	}
 }
 
+bool AValorHeroCharacterProxy::ServerOnCharacterMovement_Validate(const FHitResult& HitResult)
+{
+	// No validation is needed to "right click" a location. This can
+	// be anywhere on the map.
+	return true;
+}
+
+void AValorHeroCharacterProxy::ServerOnCharacterMovement_Implementation(const FHitResult& HitResult)
+{
+	if (HasAuthority())
+	{
+		if (Character && Character->AIController && Character->AIController->GetBlackboardComponent())
+		{
+			Character->AIController->GetBlackboardComponent()->SetValueAsVector(TEXT("MoveToLocation"), HitResult.Location);
+		}
+	}
+}
 
 void AValorHeroCharacterProxy::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const
 {

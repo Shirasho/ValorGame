@@ -87,6 +87,22 @@ void UValorStatComponent::Initialize(const class AValorPlayerState* PlayerState)
 				ensureMsgf(UDataBlueprintLibrary::ParseStringArray_float(*CurrentStatLookupPtr, BaseMagicalResistPerLevel, 1), TEXT("Invalid data found in row '%s'."), *VALOR_DATA_ROW_BASE_MAGICAL_RESIST);
 			}
 		}
+		// Base Attack Speed
+		{
+			const TArray<FString>* CurrentStatLookupPtr = StatTableData.FindByPredicate([](const TArray<FString>& DataRow) { return DataRow.Num() > 0 && DataRow[0] == VALOR_DATA_ROW_BASE_ATTACK_SPEED; });
+			if (CurrentStatLookupPtr)
+			{
+				ensureMsgf(UDataBlueprintLibrary::ParseStringArray_float(*CurrentStatLookupPtr, BaseAttackSpeedPerLevel, 1), TEXT("Invalid data found in row '%s'."), *VALOR_DATA_ROW_BASE_ATTACK_SPEED);
+			}
+		}
+		// Base Attack Range
+		{
+			const TArray<FString>* CurrentStatLookupPtr = StatTableData.FindByPredicate([](const TArray<FString>& DataRow) { return DataRow.Num() > 0 && DataRow[0] == VALOR_DATA_ROW_BASE_ATTACK_RANGE; });
+			if (CurrentStatLookupPtr)
+			{
+				ensureMsgf(UDataBlueprintLibrary::ParseStringArray_float(*CurrentStatLookupPtr, BaseAttackRangePerLevel, 1), TEXT("Invalid data found in row '%s'."), *VALOR_DATA_ROW_BASE_ATTACK_RANGE);
+			}
+		}
 	}
 
 	Health = GetHealth(EValorStatType::Max);
@@ -233,6 +249,50 @@ void UValorStatComponent::AdjustBonusMagicalResist(float Value)
 	BonusMagicalResist = FMath::Max(BonusMagicalResist + Value, 0.f);
 }
 
+float UValorStatComponent::GetAttackSpeed(EValorStatType StatType) const
+{
+	// If you hit this it means the DataTable is missing the row or the appropriate number of columns.
+	if (ensure(BaseAttackSpeedPerLevel.Num() > 0))
+	{
+		switch (StatType)
+		{
+			case EValorStatType::Base: return BaseAttackSpeedPerLevel[0];
+			case EValorStatType::Bonus: return BonusAttackSpeed;
+			case EValorStatType::Current: return BaseAttackSpeedPerLevel[0] + BonusAttackSpeed;
+			case EValorStatType::Max: return 2.f; // Magical resist has no maximum value.
+		}
+	}
+
+	return 0.f;
+}
+
+void UValorStatComponent::AdjustBonusAttackSpeed(float Value)
+{
+	BonusAttackSpeed = FMath::Clamp(BonusAttackSpeed + Value, 0.f, GetAttackSpeed(EValorStatType::Max));
+}
+
+float UValorStatComponent::GetAttackRange(EValorStatType StatType) const
+{
+	// If you hit this it means the DataTable is missing the row or the appropriate number of columns.
+	if (ensure(BaseAttackRangePerLevel.Num() > 0))
+	{
+		switch (StatType)
+		{
+			case EValorStatType::Base: return BaseAttackRangePerLevel[0];
+			case EValorStatType::Bonus: return BonusAttackRange;
+			case EValorStatType::Current: return BaseAttackRangePerLevel[0] + BonusAttackRange;
+			case EValorStatType::Max: return -1; // Magical resist has no maximum value.
+		}
+	}
+
+	return 0.f;
+}
+
+void UValorStatComponent::AdjustBonusAttackRange(float Value)
+{
+	BonusAttackRange = FMath::Max(BonusAttackRange + Value, 0.f);
+}
+
 void UValorStatComponent::GetLifetimeReplicatedProps(TArray<FLifetimeProperty> & OutLifetimeProps) const
 {
 	Super::GetLifetimeReplicatedProps(OutLifetimeProps);
@@ -244,6 +304,8 @@ void UValorStatComponent::GetLifetimeReplicatedProps(TArray<FLifetimeProperty> &
 	DOREPLIFETIME(UValorStatComponent, BonusMagicalDamage);
 	DOREPLIFETIME(UValorStatComponent, BonusPhysicalResist);
 	DOREPLIFETIME(UValorStatComponent, BonusMagicalResist);
+	DOREPLIFETIME(UValorStatComponent, BonusAttackSpeed);
+	DOREPLIFETIME(UValorStatComponent, BonusAttackRange);
 
 	DOREPLIFETIME(UValorStatComponent, BaseHealthPerLevel);
 	DOREPLIFETIME(UValorStatComponent, BaseHealthRegenPerLevel);
@@ -251,4 +313,6 @@ void UValorStatComponent::GetLifetimeReplicatedProps(TArray<FLifetimeProperty> &
 	DOREPLIFETIME(UValorStatComponent, BaseMagicalDamagePerLevel);
 	DOREPLIFETIME(UValorStatComponent, BasePhysicalResistPerLevel);
 	DOREPLIFETIME(UValorStatComponent, BaseMagicalResistPerLevel);
+	DOREPLIFETIME(UValorStatComponent, BaseAttackSpeedPerLevel);
+	DOREPLIFETIME(UValorStatComponent, BaseAttackRangePerLevel);
 }
