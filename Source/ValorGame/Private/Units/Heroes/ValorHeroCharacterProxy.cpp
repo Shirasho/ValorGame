@@ -6,6 +6,8 @@
 #include "ValorHeroCharacter.h"
 #include "ValorPlayerState.h"
 
+#include "ValorAIDefinitions.h"
+
 #define VALOR_CURSOR_ZONE_SIZE 50
 #define VALOR_CURSOR_ZONE_PCT .1f
 #define VALOR_CURSOR_ZONE_USE_PCT 0
@@ -156,6 +158,16 @@ void AValorHeroCharacterProxy::OnCharacterMovement(const FHitResult& HitResult)
 	ServerOnCharacterMovement(HitResult);
 }
 
+void AValorHeroCharacterProxy::OnCharacterAttack(const FHitResult& HitResult)
+{
+	ServerOnCharacterAttack(HitResult);
+}
+
+void AValorHeroCharacterProxy::OnCharacterInteract(const FHitResult& HitResult)
+{
+	ServerOnCharacterInteract(HitResult);
+}
+
 void AValorHeroCharacterProxy::OnCameraCenterPressed()
 {
 	bCenterCamera = true;
@@ -211,7 +223,51 @@ void AValorHeroCharacterProxy::ServerOnCharacterMovement_Implementation(const FH
 	{
 		if (Character && Character->AIController && Character->AIController->GetBlackboardComponent())
 		{
-			Character->AIController->GetBlackboardComponent()->SetValueAsVector(TEXT("MoveToLocation"), HitResult.Location);
+			Character->AIController->GetBlackboardComponent()->SetValueAsVector(VALOR_AI_BBKEY_MoveToLocation, HitResult.Location);
+			Character->AIController->GetBlackboardComponent()->ClearValue(VALOR_AI_BBKEY_AttackActor);
+			Character->AIController->GetBlackboardComponent()->ClearValue(VALOR_AI_BBKEY_ExplicitAttack);
+		}
+	}
+}
+
+bool AValorHeroCharacterProxy::ServerOnCharacterAttack_Validate(const FHitResult& HitResult)
+{
+	IValorUnitInterface* UnitInterface = Cast<IValorUnitInterface>(HitResult.GetActor());
+	IValorClickableInterface* ClickableInterface = Cast<IValorClickableInterface>(HitResult.GetActor());
+	if (UnitInterface && UnitInterface->IsAlive() && ClickableInterface && Character)
+	{
+		return Character->GetTeam() != UnitInterface->GetTeam();
+	}
+	return false;
+}
+
+void AValorHeroCharacterProxy::ServerOnCharacterAttack_Implementation(const FHitResult& HitResult)
+{
+	if (HasAuthority())
+	{
+		if (Character && Character->AIController && Character->AIController->GetBlackboardComponent())
+		{
+			VALOR_PRINT("Attempting to attack unit '%s'.", *GetNameSafe(HitResult.GetActor()));
+			Character->AIController->GetBlackboardComponent()->SetValueAsBool(VALOR_AI_BBKEY_ExplicitAttack, true);
+			Character->AIController->GetBlackboardComponent()->SetValueAsObject(VALOR_AI_BBKEY_AttackActor, HitResult.GetActor());
+			Character->AIController->GetBlackboardComponent()->ClearValue(VALOR_AI_BBKEY_MoveToLocation);
+		}
+	}
+}
+
+bool AValorHeroCharacterProxy::ServerOnCharacterInteract_Validate(const FHitResult& HitResult)
+{
+	//@TODO
+	return true;
+}
+
+void AValorHeroCharacterProxy::ServerOnCharacterInteract_Implementation(const FHitResult& HitResult)
+{
+	if (HasAuthority())
+	{
+		if (Character && Character->AIController && Character->AIController->GetBlackboardComponent())
+		{
+			//@TODO
 		}
 	}
 }

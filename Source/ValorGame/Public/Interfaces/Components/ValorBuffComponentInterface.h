@@ -4,7 +4,7 @@
 
 #include "ValorBuffComponentInterface.generated.h"
 
-UINTERFACE(MinimalAPI)
+UINTERFACE(MinimalAPI, BlueprintType, meta = (CannotImplementInterfaceInBlueprint))
 class UValorBuffComponentInterface : public UInterface
 {
 	GENERATED_UINTERFACE_BODY()

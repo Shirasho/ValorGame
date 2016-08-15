@@ -77,7 +77,7 @@ public:
 
 public:
 
-	UFUNCTION(BlueprintPure, Category = Stats)
+	UFUNCTION(BlueprintCallable, Category = Stats)
 	virtual float GetHealth(EValorStatType StatType) const override;
 
 	UFUNCTION(BlueprintCallable, Category = Stats)
@@ -94,35 +94,35 @@ public:
 	* ValorStatComponent (or ValorHeroStatComponent) and implement
 	* it where needed. */
 
-	UFUNCTION(BlueprintPure, Category = Stats)
+	UFUNCTION(BlueprintCallable, Category = Stats)
 	virtual float GetHealthRegen(EValorStatType StatType) const override;
 
 	UFUNCTION(BlueprintCallable, Category = Stats)
 	virtual void AdjustBonusHealthRegen(float Value) override;
 
 
-	UFUNCTION(BlueprintPure, Category = Stats)
+	UFUNCTION(BlueprintCallable, Category = Stats)
 	virtual float GetPhysicalDamage(EValorStatType StatType) const override;
 
 	UFUNCTION(BlueprintCallable, Category = Stats)
 	virtual void AdjustBonusPhysicalDamage(float Value) override;
 
 
-	UFUNCTION(BlueprintPure, Category = Stats)
+	UFUNCTION(BlueprintCallable, Category = Stats)
 	virtual float GetMagicalDamage(EValorStatType StatType) const override;
 
 	UFUNCTION(BlueprintCallable, Category = Stats)
 	virtual void AdjustBonusMagicalDamage(float Value) override;
 
 
-	UFUNCTION(BlueprintPure, Category = Stats)
+	UFUNCTION(BlueprintCallable, Category = Stats)
 	virtual float GetPhysicalResist(EValorStatType StatType) const override;
 
 	UFUNCTION(BlueprintCallable, Category = Stats)
 	virtual void AdjustBonusPhysicalResist(float Value) override;
 
 
-	UFUNCTION(BlueprintPure, Category = Stats)
+	UFUNCTION(BlueprintCallable, Category = Stats)
 	virtual float GetMagicalResist(EValorStatType StatType) const override;
 
 	UFUNCTION(BlueprintCallable, Category = Stats)

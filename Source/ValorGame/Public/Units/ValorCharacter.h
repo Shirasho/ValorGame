@@ -87,10 +87,10 @@ public:
 
 public:
 
-	UFUNCTION(BlueprintPure, Category = Stats)
-	bool IsAlive() const;
+	UFUNCTION(BlueprintCallable, Category = Stats)
+	virtual bool IsAlive() const override;
 
-	UFUNCTION(BlueprintPure, Category = Stats)
+	UFUNCTION(BlueprintCallable, Category = Stats)
 	EValorTeam GetTeam() const override;
 
 	void SetTeam(EValorTeam NewTeam)
@@ -98,7 +98,7 @@ public:
 		CharacterTeam = NewTeam;
 	}
 
-	UFUNCTION(BlueprintPure, Category = Stats)
+	UFUNCTION(BlueprintCallable, Category = Stats)
 	bool IsStealthed() const override
 	{
 		return bStealthed;
@@ -118,8 +118,8 @@ public:
 
 public:
 
-	UFUNCTION(BlueprintPure, Category = Stats)
-	class UValorStatComponent* GetStatComponent() const;
+	UFUNCTION(BlueprintCallable, Category = Stats)
+	class UValorStatComponent* GetStatComponent() const override;
 
 public:
 

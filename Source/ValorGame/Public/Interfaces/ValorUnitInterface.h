@@ -15,6 +15,14 @@ class IValorUnitInterface
 {
 	GENERATED_IINTERFACE_BODY()
 
+	UFUNCTION(BlueprintCallable, Category = Stats)
 	virtual EValorTeam GetTeam() const;
+	UFUNCTION(BlueprintCallable, Category = Stats)
+	virtual class UValorStatComponent* GetStatComponent() const;
+
+	UFUNCTION(BlueprintCallable, Category = UnitInterface)
 	virtual bool IsStealthed() const;
+	UFUNCTION(BlueprintCallable, Category = UnitInterface)
+	virtual bool IsAlive() const;
+	
 };

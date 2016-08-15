@@ -232,14 +232,50 @@ void AValorPlayerController::OnPrimaryAction2Pressed()
 		FHitResult HitResult;
 		GetHitResultUnderCursor(ECC_Visibility, false, HitResult);
 
-		if (HitResult.bBlockingHit)
+		if (HitResult.bBlockingHit && GetValorHeroCharacterProxy())
 		{
-			if (GetValorHeroCharacterProxy())
+			IValorClickableInterface* ClickableInterface = Cast<IValorClickableInterface>(HitResult.GetActor());
+
+			// If the hit unit is clickable...
+			if (ClickableInterface)
+			{
+				IValorUnitInterface* UnitInterface = Cast<IValorUnitInterface>(HitResult.GetActor());
+
+				// If the hit unit is an actual unit...
+				if (UnitInterface)
+				{
+					const AValorPlayerState* ValorPlayerState = Cast<AValorPlayerState>(PlayerState);
+					check(PlayerState);
+
+					// If the hit unit is on the same team we ignore the unit and simply move there.
+					if (ValorPlayerState->GetPlayerTeam() == UnitInterface->GetTeam())
+					{
+						GetValorHeroCharacterProxy()->OnCharacterMovement(HitResult);
+						// Only recall this method if right-clicking was a successful movement call.
+						GetWorld()->GetTimerManager().SetTimer(TimerHandle_MoveToCursor, this, &AValorPlayerController::OnPrimaryAction2Pressed, GetWorldSettings()->GetEffectiveTimeDilation() * 0.45f, false);
+					}
+					// The hit unit is an enemy. Trigger Move-Attack.
+					else
+					{
+						GetValorHeroCharacterProxy()->OnCharacterAttack(HitResult);
+					}
+				}
+				// The hit unit is interactable but isn't a unit. Move next to it
+				// then interact with it.
+				else
+				{
+					GetValorHeroCharacterProxy()->OnCharacterInteract(HitResult);
+					// Only recall this method if right-clicking was a successful movement call.
+					GetWorld()->GetTimerManager().SetTimer(TimerHandle_MoveToCursor, this, &AValorPlayerController::OnPrimaryAction2Pressed, GetWorldSettings()->GetEffectiveTimeDilation() * 0.45f, false);
+				}
+			}
+			// No clickable unit was hit. Assume simple move to point.
+			else
 			{
 				GetValorHeroCharacterProxy()->OnCharacterMovement(HitResult);
+				// Only recall this method if right-clicking was a successful movement call.
+				GetWorld()->GetTimerManager().SetTimer(TimerHandle_MoveToCursor, this, &AValorPlayerController::OnPrimaryAction2Pressed, GetWorldSettings()->GetEffectiveTimeDilation() * 0.45f, false);
 			}
-
-			GetWorld()->GetTimerManager().SetTimer(TimerHandle_MoveToCursor, this, &AValorPlayerController::OnPrimaryAction2Pressed, GetWorldSettings()->GetEffectiveTimeDilation() * 0.45f, false);
 		}
 	}
 }

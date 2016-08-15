@@ -63,16 +63,21 @@ public:
 	UFUNCTION(Server, Reliable, WithValidation)
 	void ServerCreatePlayer(/*const APlayerState* ControllerPlayerState*/);
 
-public: // PreServer
+public:
 
 	void OnCameraCenterPressed();
 	void OnCameraCenterReleased();
 
-public: // PostServer
+public:
 
-	/* Called when the player has clicked a valid movement location after the
-	* request has been sent to the server. */
+	/* Called when the player has right-clicked a valid movement location. */
 	void OnCharacterMovement(const FHitResult& HitResult);
+
+	/* Called when the player has right-clicked a valid enemy unit. */
+	void OnCharacterAttack(const FHitResult& HitResult);
+
+	/* Called when the player has right-clicked a valid interactable item. */
+	void OnCharacterInteract(const FHitResult& HitResult);
 
 	/* Displays the movement decal when the player clicks on a valid movement location. */
 	void DisplayMovementDecal(const FHitResult& HitResult);
@@ -81,6 +86,12 @@ protected:
 
 	UFUNCTION(Server, Reliable, WithValidation)
 	virtual void ServerOnCharacterMovement(const FHitResult& HitResult);
+
+	UFUNCTION(Server, Reliable, WithValidation)
+	virtual void ServerOnCharacterAttack(const FHitResult& HitResult);
+
+	UFUNCTION(Server, Reliable, WithValidation)
+	virtual void ServerOnCharacterInteract(const FHitResult& HitResult);
 
 private:
 

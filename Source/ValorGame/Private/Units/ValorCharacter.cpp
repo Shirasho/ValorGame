@@ -229,9 +229,12 @@ UValorStatComponent* AValorCharacter::GetStatComponent() const
 		return StatComponent;
 	}
 
+	TSet<UActorComponent*> Components = GetComponents();
+
 	/* Mutable instance of this to work around const. */
 	AValorCharacter* MutableThis = const_cast<AValorCharacter*>(this);
-	return MutableThis->StatComponent = FindComponentByClass<UValorStatComponent>();
+	MutableThis->StatComponent = FindComponentByClass<UValorStatComponent>();
+	return StatComponent;
 }
 
 void AValorCharacter::OnLevelUp()

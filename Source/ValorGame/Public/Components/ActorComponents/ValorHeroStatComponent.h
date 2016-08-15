@@ -12,13 +12,13 @@ class UValorHeroStatComponent : public UValorUnitStatComponent
 
 public:
 
-	UFUNCTION(BlueprintPure, Category = Stats)
+	UFUNCTION(BlueprintCallable, Category = Stats)
 	virtual int32 GetExperience() const override;
 
 	UFUNCTION(BlueprintCallable, Category = Stats)
 	virtual void AdjustExperience(int32 Value) override;
 
-	UFUNCTION(BlueprintPure, Category = Stats)
+	UFUNCTION(BlueprintCallable, Category = Stats)
 	virtual uint8 GetUnitLevel() const override;
 
 	virtual void Initialize(const class AValorPlayerState* PlayerState = nullptr);

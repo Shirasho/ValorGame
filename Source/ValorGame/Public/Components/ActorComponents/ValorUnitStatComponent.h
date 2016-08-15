@@ -53,7 +53,7 @@ public:
 
 public:
 
-	UFUNCTION(BlueprintPure, Category = Stats)
+	UFUNCTION(BlueprintCallable, Category = Stats)
 	virtual float GetMana(EValorStatType StatType) const override;
 
 	UFUNCTION(BlueprintCallable, Category = Stats)
@@ -65,31 +65,31 @@ public:
 	UFUNCTION(BlueprintCallable, Category = Stats)
 	virtual void AdjustBonusMana(float Value) override;
 
-	UFUNCTION(BlueprintPure, Category = Stats)
+	UFUNCTION(BlueprintCallable, Category = Stats)
 	virtual float GetManaRegen(EValorStatType StatType) const override;
 
 	UFUNCTION(BlueprintCallable, Category = Stats)
 	virtual void AdjustBonusManaRegen(float Value) override;
 
-	UFUNCTION(BlueprintPure, Category = Stats)
+	UFUNCTION(BlueprintCallable, Category = Stats)
 	virtual float GetCooldownReduction(EValorStatType StatType) const override;
 
 	UFUNCTION(BlueprintCallable, Category = Stats)
 	virtual void AdjustBonusCooldownReduction(float Value) override;
 
-	UFUNCTION(BlueprintPure, Category = Stats)
+	UFUNCTION(BlueprintCallable, Category = Stats)
 	virtual float GetMovementSpeed(EValorStatType StatType) const override;
 
 	UFUNCTION(BlueprintCallable, Category = Stats)
 	virtual void AdjustBonusMovementSpeed(float Value) override;
 
-	UFUNCTION(BlueprintPure, Category = Stats)
+	UFUNCTION(BlueprintCallable, Category = Stats)
 	virtual int32 GetExperience() const override;
 
 	UFUNCTION(BlueprintCallable, Category = Stats)
 	virtual void AdjustExperience(int32 Value) override;
 
-	UFUNCTION(BlueprintPure, Category = Stats)
+	UFUNCTION(BlueprintCallable, Category = Stats)
 	virtual uint8 GetUnitLevel() const override;
 
 	UFUNCTION(BlueprintCallable, Category = Stats)
@@ -97,22 +97,22 @@ public:
 
 	// ValorStatComponentInterface Overrides
 
-	UFUNCTION(BlueprintPure, Category = Stats)
+	UFUNCTION(BlueprintCallable, Category = Stats)
 	virtual float GetHealth(EValorStatType StatType) const override;
 
-	UFUNCTION(BlueprintPure, Category = Stats)
+	UFUNCTION(BlueprintCallable, Category = Stats)
 	virtual float GetHealthRegen(EValorStatType StatType) const override;
 
-	UFUNCTION(BlueprintPure, Category = Stats)
+	UFUNCTION(BlueprintCallable, Category = Stats)
 	virtual float GetPhysicalDamage(EValorStatType StatType) const override;
 
-	UFUNCTION(BlueprintPure, Category = Stats)
+	UFUNCTION(BlueprintCallable, Category = Stats)
 	virtual float GetMagicalDamage(EValorStatType StatType) const override;
 
-	UFUNCTION(BlueprintPure, Category = Stats)
+	UFUNCTION(BlueprintCallable, Category = Stats)
 	virtual float GetPhysicalResist(EValorStatType StatType) const override;
 
-	UFUNCTION(BlueprintPure, Category = Stats)
+	UFUNCTION(BlueprintCallable, Category = Stats)
 	virtual float GetMagicalResist(EValorStatType StatType) const override;
 
 	UFUNCTION(BlueprintCallable, Category = Stats)
