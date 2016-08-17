@@ -20,6 +20,8 @@ void AValorMinion::Spawn(APlayerState* UsePlayerState, void* ExtraData)
 {
 	if (HasAuthority())
 	{
+		DECLARE_SCOPE_CYCLE_COUNTER(TEXT("AValorMinion::Spawn"), STAT_ValorMinion_Spawn, STATGROUP_ValorCharacter);
+
 		// Minions can't have PlayerStates at this point in time.
 		check(UsePlayerState == nullptr);
 

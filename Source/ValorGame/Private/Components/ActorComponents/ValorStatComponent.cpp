@@ -3,7 +3,7 @@
 #include "ValorGame.h"
 #include "ValorStatComponent.h"
 
-#include "DataBlueprintLibrary.h"
+#include "TypesBlueprintLibrary.h"
 #include "ValorDataDefinitions.h"
 #include "ValorStatTableRow.h"
 
@@ -37,6 +37,8 @@ void UValorStatComponent::Initialize(const class AValorPlayerState* PlayerState)
 {
 	if (StatTable)
 	{
+		DECLARE_SCOPE_CYCLE_COUNTER(TEXT("UValorStatComponent::Initialize"), STAT_ValorStatComponent_Initialize, STATGROUP_ValorComponent);
+
 		const TArray<TArray<FString>>& StatTableData = StatTable->GetTableData();
 
 		// Base Health
@@ -44,7 +46,7 @@ void UValorStatComponent::Initialize(const class AValorPlayerState* PlayerState)
 			const TArray<FString>* CurrentStatLookupPtr = StatTableData.FindByPredicate([](const TArray<FString>& DataRow) { return DataRow.Num() > 0 && DataRow[0] == VALOR_DATA_ROW_BASE_HEALTH; });
 			if (CurrentStatLookupPtr)
 			{
-				ensureMsgf(UDataBlueprintLibrary::ParseStringArray_float(*CurrentStatLookupPtr, BaseHealthPerLevel, 1), TEXT("Invalid data found in row '%s'."), *VALOR_DATA_ROW_BASE_HEALTH);
+				ensureMsgf(UTypesBlueprintLibrary::K2_StringToFloatArray(*CurrentStatLookupPtr, BaseHealthPerLevel, 1), TEXT("Invalid data found in row '%s'."), *VALOR_DATA_ROW_BASE_HEALTH);
 			}
 		}
 		// Base Health Regen
@@ -52,7 +54,7 @@ void UValorStatComponent::Initialize(const class AValorPlayerState* PlayerState)
 			const TArray<FString>* CurrentStatLookupPtr = StatTableData.FindByPredicate([](const TArray<FString>& DataRow) { return DataRow.Num() > 0 && DataRow[0] == VALOR_DATA_ROW_BASE_HEALTH_REGEN; });
 			if (CurrentStatLookupPtr)
 			{
-				ensureMsgf(UDataBlueprintLibrary::ParseStringArray_float(*CurrentStatLookupPtr, BaseHealthRegenPerLevel, 1), TEXT("Invalid data found in row '%s'."), *VALOR_DATA_ROW_BASE_HEALTH_REGEN);
+				ensureMsgf(UTypesBlueprintLibrary::K2_StringToFloatArray(*CurrentStatLookupPtr, BaseHealthRegenPerLevel, 1), TEXT("Invalid data found in row '%s'."), *VALOR_DATA_ROW_BASE_HEALTH_REGEN);
 			}
 		}
 		// Base Physical Damage
@@ -60,7 +62,7 @@ void UValorStatComponent::Initialize(const class AValorPlayerState* PlayerState)
 			const TArray<FString>* CurrentStatLookupPtr = StatTableData.FindByPredicate([](const TArray<FString>& DataRow) { return DataRow.Num() > 0 && DataRow[0] == VALOR_DATA_ROW_BASE_PHYSICAL_DAMAGE; });
 			if (CurrentStatLookupPtr)
 			{
-				ensureMsgf(UDataBlueprintLibrary::ParseStringArray_float(*CurrentStatLookupPtr, BasePhysicalDamagePerLevel, 1), TEXT("Invalid data found in row '%s'."), *VALOR_DATA_ROW_BASE_PHYSICAL_DAMAGE);
+				ensureMsgf(UTypesBlueprintLibrary::K2_StringToFloatArray(*CurrentStatLookupPtr, BasePhysicalDamagePerLevel, 1), TEXT("Invalid data found in row '%s'."), *VALOR_DATA_ROW_BASE_PHYSICAL_DAMAGE);
 			}
 		}
 		// Base PhysicalResist
@@ -68,7 +70,7 @@ void UValorStatComponent::Initialize(const class AValorPlayerState* PlayerState)
 			const TArray<FString>* CurrentStatLookupPtr = StatTableData.FindByPredicate([](const TArray<FString>& DataRow) { return DataRow.Num() > 0 && DataRow[0] == VALOR_DATA_ROW_BASE_PHYSICAL_RESIST; });
 			if (CurrentStatLookupPtr)
 			{
-				ensureMsgf(UDataBlueprintLibrary::ParseStringArray_float(*CurrentStatLookupPtr, BasePhysicalResistPerLevel, 1), TEXT("Invalid data found in row '%s'."), *VALOR_DATA_ROW_BASE_PHYSICAL_RESIST);
+				ensureMsgf(UTypesBlueprintLibrary::K2_StringToFloatArray(*CurrentStatLookupPtr, BasePhysicalResistPerLevel, 1), TEXT("Invalid data found in row '%s'."), *VALOR_DATA_ROW_BASE_PHYSICAL_RESIST);
 			}
 		}
 		// Base Magical Damage
@@ -76,7 +78,7 @@ void UValorStatComponent::Initialize(const class AValorPlayerState* PlayerState)
 			const TArray<FString>* CurrentStatLookupPtr = StatTableData.FindByPredicate([](const TArray<FString>& DataRow) { return DataRow.Num() > 0 && DataRow[0] == VALOR_DATA_ROW_BASE_MAGICAL_DAMAGE; });
 			if (CurrentStatLookupPtr)
 			{
-				ensureMsgf(UDataBlueprintLibrary::ParseStringArray_float(*CurrentStatLookupPtr, BaseMagicalDamagePerLevel, 1), TEXT("Invalid data found in row '%s'."), *VALOR_DATA_ROW_BASE_MAGICAL_DAMAGE);
+				ensureMsgf(UTypesBlueprintLibrary::K2_StringToFloatArray(*CurrentStatLookupPtr, BaseMagicalDamagePerLevel, 1), TEXT("Invalid data found in row '%s'."), *VALOR_DATA_ROW_BASE_MAGICAL_DAMAGE);
 			}
 		}
 		// Base Magical Resist
@@ -84,7 +86,7 @@ void UValorStatComponent::Initialize(const class AValorPlayerState* PlayerState)
 			const TArray<FString>* CurrentStatLookupPtr = StatTableData.FindByPredicate([](const TArray<FString>& DataRow) { return DataRow.Num() > 0 && DataRow[0] == VALOR_DATA_ROW_BASE_MAGICAL_RESIST; });
 			if (CurrentStatLookupPtr)
 			{
-				ensureMsgf(UDataBlueprintLibrary::ParseStringArray_float(*CurrentStatLookupPtr, BaseMagicalResistPerLevel, 1), TEXT("Invalid data found in row '%s'."), *VALOR_DATA_ROW_BASE_MAGICAL_RESIST);
+				ensureMsgf(UTypesBlueprintLibrary::K2_StringToFloatArray(*CurrentStatLookupPtr, BaseMagicalResistPerLevel, 1), TEXT("Invalid data found in row '%s'."), *VALOR_DATA_ROW_BASE_MAGICAL_RESIST);
 			}
 		}
 		// Base Attack Speed
@@ -92,7 +94,7 @@ void UValorStatComponent::Initialize(const class AValorPlayerState* PlayerState)
 			const TArray<FString>* CurrentStatLookupPtr = StatTableData.FindByPredicate([](const TArray<FString>& DataRow) { return DataRow.Num() > 0 && DataRow[0] == VALOR_DATA_ROW_BASE_ATTACK_SPEED; });
 			if (CurrentStatLookupPtr)
 			{
-				ensureMsgf(UDataBlueprintLibrary::ParseStringArray_float(*CurrentStatLookupPtr, BaseAttackSpeedPerLevel, 1), TEXT("Invalid data found in row '%s'."), *VALOR_DATA_ROW_BASE_ATTACK_SPEED);
+				ensureMsgf(UTypesBlueprintLibrary::K2_StringToFloatArray(*CurrentStatLookupPtr, BaseAttackSpeedPerLevel, 1), TEXT("Invalid data found in row '%s'."), *VALOR_DATA_ROW_BASE_ATTACK_SPEED);
 			}
 		}
 		// Base Attack Range
@@ -100,7 +102,7 @@ void UValorStatComponent::Initialize(const class AValorPlayerState* PlayerState)
 			const TArray<FString>* CurrentStatLookupPtr = StatTableData.FindByPredicate([](const TArray<FString>& DataRow) { return DataRow.Num() > 0 && DataRow[0] == VALOR_DATA_ROW_BASE_ATTACK_RANGE; });
 			if (CurrentStatLookupPtr)
 			{
-				ensureMsgf(UDataBlueprintLibrary::ParseStringArray_float(*CurrentStatLookupPtr, BaseAttackRangePerLevel, 1), TEXT("Invalid data found in row '%s'."), *VALOR_DATA_ROW_BASE_ATTACK_RANGE);
+				ensureMsgf(UTypesBlueprintLibrary::K2_StringToFloatArray(*CurrentStatLookupPtr, BaseAttackRangePerLevel, 1), TEXT("Invalid data found in row '%s'."), *VALOR_DATA_ROW_BASE_ATTACK_RANGE);
 			}
 		}
 	}

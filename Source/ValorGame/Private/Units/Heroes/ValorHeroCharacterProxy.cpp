@@ -13,8 +13,6 @@
 #define VALOR_CURSOR_ZONE_USE_PCT 0
 #define VALOR_CAMERA_PAN_SPEED 2500.f
 
-DECLARE_CYCLE_STAT(TEXT("ValorGame ~ ProcessCameraInput"), STAT_ProcessCameraInput, STATGROUP_ValorCharacterProxy);
-
 AValorHeroCharacterProxy::AValorHeroCharacterProxy(const FObjectInitializer& ObjectInitializer)
 	: Super(ObjectInitializer)
 {
@@ -89,7 +87,6 @@ void AValorHeroCharacterProxy::DisplayMovementDecal(const FHitResult& HitResult)
 
 void AValorHeroCharacterProxy::ProcessCameraInput(float DeltaSeconds)
 {
-	SCOPE_CYCLE_COUNTER(STAT_ProcessCameraInput);
 	if (Character)
 	{
 		if (bCenterCamera)
@@ -105,6 +102,8 @@ void AValorHeroCharacterProxy::ProcessCameraInput(float DeltaSeconds)
 		}
 		else
 		{
+			DECLARE_SCOPE_CYCLE_COUNTER(TEXT("AValorHeroCharacterProxy::ProcessCameraInput"), STAT_ValorHeroCharacterProxy_ProcessCameraInput, STATGROUP_ValorCamera);
+
 			if (UGameViewportClient* ViewportClient = GetWorld()->GetGameViewport())
 			{
 				if (ViewportClient->Viewport && ViewportClient->Viewport->IsForegroundWindow()/*->IsFocused(ViewportClient->Viewport)*/)
@@ -179,12 +178,12 @@ void AValorHeroCharacterProxy::OnCameraCenterReleased()
 }
 
 
-bool AValorHeroCharacterProxy::ServerCreatePlayer_Validate(/*const APlayerState* ControllerPlayerState*/)
+bool AValorHeroCharacterProxy::ServerCreatePlayer_Validate()
 {
 	return true;/*ControllerPlayerState != nullptr;*/
 }
 
-void AValorHeroCharacterProxy::ServerCreatePlayer_Implementation(/*const APlayerState* ControllerPlayerState*/)
+void AValorHeroCharacterProxy::ServerCreatePlayer_Implementation()
 {
 	if (HasAuthority())
 	{

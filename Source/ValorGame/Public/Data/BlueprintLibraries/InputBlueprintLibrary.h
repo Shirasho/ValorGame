@@ -14,34 +14,34 @@ class UInputBlueprintLibrary : public UBlueprintFunctionLibrary
 
 public:
 
-	UFUNCTION(BlueprintPure, Category = "Input|Key Rebinding")
-		static void GetAxisAndActionMappingsForKey(FKey Key, TArray<FValorActionInputBinding>& ActionBindings, TArray<FValorAxisInputBinding>& AxisBindings);
+	UFUNCTION(BlueprintPure, Category = "Input|Key Rebinding", DisplayName = "Get Axis and Action Mappings for Key")
+		static void K2_GetAxisAndActionMappingsForKey(FKey Key, TArray<FValorActionInputBinding>& ActionBindings, TArray<FValorAxisInputBinding>& AxisBindings);
 
 
-	UFUNCTION(BlueprintPure, Category = "Input|Key Rebinding")
-		static FValorAxisInputBinding GetInputAxis(const FKeyEvent& KeyEvent);
+	UFUNCTION(BlueprintPure, Category = "Input|Key Rebinding", DisplayName = "Get Input Axis")
+		static FValorAxisInputBinding K2_GetInputAxis(const FKeyEvent& KeyEvent);
 
-	UFUNCTION(BlueprintPure, Category = "Input|Key Rebinding")
-		static void GetAllAxisKeyBindings(TArray<FValorAxisInputBinding>& Bindings);
+	UFUNCTION(BlueprintPure, Category = "Input|Key Rebinding", DisplayName = "Get All Axis Key Bindings")
+		static void K2_GetAllAxisKeyBindings(TArray<FValorAxisInputBinding>& Bindings);
 
-	UFUNCTION(BlueprintCallable, Category = "Input|Key Rebinding")
-		static void RemoveAxisKeyBinding(FValorAxisInputBinding BindingToRemove);
+	UFUNCTION(BlueprintCallable, Category = "Input|Key Rebinding", DisplayName = "Remove Axis Key Binding")
+		static void K2_RemoveAxisKeyBinding(FValorAxisInputBinding BindingToRemove);
 
-	UFUNCTION(BlueprintCallable, Category = "Input|Key Rebinding")
-		static bool RebindAxisKey(FValorAxisInputBinding OriginalBinding, FValorAxisInputBinding NewBinding);
+	UFUNCTION(BlueprintCallable, Category = "Input|Key Rebinding", DisplayName = "Rebind Axis Key Binding")
+		static bool K2_RebindAxisKey(FValorAxisInputBinding OriginalBinding, FValorAxisInputBinding NewBinding);
 
 
-	UFUNCTION(BlueprintPure, Category = "Input|Key Rebinding")
-		static FValorActionInputBinding GetInputAction(const FKeyEvent& KeyEvent);
+	UFUNCTION(BlueprintPure, Category = "Input|Key Rebinding", DisplayName = "Get Input Action")
+		static FValorActionInputBinding K2_GetInputAction(const FKeyEvent& KeyEvent);
 
-	UFUNCTION(BlueprintPure, Category = "Input|Key Rebinding")
-		static void GetAllActionKeyBindings(TArray<FValorActionInputBinding>& Bindings);
+	UFUNCTION(BlueprintPure, Category = "Input|Key Rebinding", DisplayName = "Get All Action Key Bindings")
+		static void K2_GetAllActionKeyBindings(TArray<FValorActionInputBinding>& Bindings);
 
-	UFUNCTION(BlueprintCallable, Category = "Input|Key Rebinding")
-		static void RemoveActionKeyBinding(FValorActionInputBinding BindingToRemove);
+	UFUNCTION(BlueprintCallable, Category = "Input|Key Rebinding", DisplayName = "Remove Action Key Binding")
+		static void K2_RemoveActionKeyBinding(FValorActionInputBinding BindingToRemove);
 
-	UFUNCTION(BlueprintCallable, Category = "Input|Key Rebinding")
-		static bool RebindActionKey(FValorActionInputBinding OriginalBinding, FValorActionInputBinding NewBinding);
+	UFUNCTION(BlueprintCallable, Category = "Input|Key Rebinding", DisplayName = "Rebind Action Key Binding")
+		static bool K2_RebindActionKey(FValorActionInputBinding OriginalBinding, FValorActionInputBinding NewBinding);
 
 public:
 

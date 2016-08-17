@@ -58,6 +58,8 @@ void AValorHeroCharacter::Spawn(APlayerState* UsePlayerState, const FValorVarian
 {
 	if (HasAuthority())
 	{
+		DECLARE_SCOPE_CYCLE_COUNTER(TEXT("AValorHeroCharacter::Spawn"), STAT_ValorHeroCharacter_Spawn, STATGROUP_ValorCharacter);
+
 		PlayerState = UsePlayerState ? UsePlayerState : PlayerState;
 		Initialize(UsePlayerState);
 

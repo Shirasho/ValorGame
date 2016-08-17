@@ -18,3 +18,11 @@
     /* Whether the platform a is a web platform. */
     #define PLATFORM_WEB PLATFORM_HTML5
 #endif
+
+#if PLATFORM_WIN
+	#include "ValorWindowsPlatformDefinitions.h"
+#elseif PLATFORM_MAC
+	#include "ValorMacPlatformDefinitions.h"
+#elseif PLATFORM_LINUX
+	#include "ValorLinuxPlatformDefinitions.h"
+#endif

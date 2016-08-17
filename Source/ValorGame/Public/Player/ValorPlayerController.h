@@ -4,8 +4,6 @@
 
 #include "ValorPlayerController.generated.h"
 
-DECLARE_STATS_GROUP(TEXT("ValorGame"), STATGROUP_ValorPlayerController, STATCAT_Advanced);
-
 UCLASS(Config = Game)
 class AValorPlayerController : public APlayerController
 {

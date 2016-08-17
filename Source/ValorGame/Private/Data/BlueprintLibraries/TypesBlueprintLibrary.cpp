@@ -1,9 +1,9 @@
 // Copyright Shirasho Media 2016. All rights reserved.
 
 #include "ValorGame.h"
-#include "DataBlueprintLibrary.h"
+#include "TypesBlueprintLibrary.h"
 
-bool UDataBlueprintLibrary::ParseStringArray_float(const TArray<FString>& InData, TArray<float>& OutData, int32 StartIndex)
+bool UTypesBlueprintLibrary::K2_StringToFloatArray(const TArray<FString>& InData, TArray<float>& OutData, int32 StartIndex)
 {
 	bool bSuccess = true;
 
@@ -23,7 +23,7 @@ bool UDataBlueprintLibrary::ParseStringArray_float(const TArray<FString>& InData
 	return bSuccess;
 }
 
-bool UDataBlueprintLibrary::ParseStringArray_uint8(const TArray<FString>& InData, TArray<uint8>& OutData, int32 StartIndex)
+bool UTypesBlueprintLibrary::K2_StringToUint8Array(const TArray<FString>& InData, TArray<uint8>& OutData, int32 StartIndex)
 {
 	bool bSuccess = true;
 
@@ -47,7 +47,7 @@ bool UDataBlueprintLibrary::ParseStringArray_uint8(const TArray<FString>& InData
 	return bSuccess;
 }
 
-bool UDataBlueprintLibrary::ParseStringArray_int32(const TArray<FString>& InData, TArray<int32>& OutData, int32 StartIndex)
+bool UTypesBlueprintLibrary::K2_StringToInt32Array(const TArray<FString>& InData, TArray<int32>& OutData, int32 StartIndex)
 {
 	bool bSuccess = true;
 

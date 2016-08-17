@@ -2,11 +2,11 @@
 
 #pragma once
 
-#include "Blueprint/UserWidget.h"
-#include "ValorUserWidget.generated.h"
+#include "ValorUserWidget.h"
+#include "ValorSelectedUnitWidget.generated.h"
 
 UCLASS()
-class VALORGAME_API UValorUserWidget : public UUserWidget
+class UValorSelectedUnitWidget : public UUserWidget
 {
 	GENERATED_BODY()
 

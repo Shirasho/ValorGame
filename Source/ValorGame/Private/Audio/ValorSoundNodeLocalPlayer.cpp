@@ -5,6 +5,8 @@
 
 void UValorSoundNodeLocalPlayer::ParseNodes(FAudioDevice* AudioDevice, const UPTRINT NodeWaveInstanceHash, FActiveSound& ActiveSound, const FSoundParseParameters& ParseParams, TArray<FWaveInstance*>& WaveInstances)
 {
+	DECLARE_SCOPE_CYCLE_COUNTER(TEXT("UValorSoundNodeLocalPlayer::ParseNodes"), STAT_ValorSoundNodeLocalPlayer_ParseNodes, STATGROUP_ValorAudio);
+
     // The accesses to the Pawn will be unsafe once we thread audio, deal with this at that point
     check(IsInGameThread());
 

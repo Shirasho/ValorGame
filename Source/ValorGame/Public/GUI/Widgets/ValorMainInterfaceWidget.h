@@ -6,13 +6,19 @@
 #include "ValorMainInterfaceWidget.generated.h"
 
 UCLASS()
-class VALORGAME_API UValorMainInterfaceWidget : public UValorUserWidget
+class UValorMainInterfaceWidget : public UValorUserWidget
 {
 	GENERATED_BODY()
+
+protected:
+
+	UPROPERTY(BlueprintReadWrite, VisibleAnywhere, Category = Elements)
+	class UValorSelectedUnitWidget* SelectedUnitWidget;
 
 public:
 
 	virtual void NativeConstruct() override;
+	virtual TSharedRef<SWidget> RebuildWidget() override;
 
 public:
 

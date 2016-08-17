@@ -74,6 +74,8 @@ float AValorCharacter::TakeDamage(float DamageAmount, FDamageEvent const& Damage
 
 	if (HasAuthority())
 	{
+		DECLARE_SCOPE_CYCLE_COUNTER(TEXT("AValorCharacter::TakeDamage"), STAT_ValorCharacter_TakeDamage, STATGROUP_ValorCharacter);
+
 		if (!bDamageable)
 		{
 			return Super::TakeDamage(0.f, DamageEvent, EventInstigator, DamageCauser);
@@ -215,6 +217,8 @@ void AValorCharacter::Initialize(class APlayerState* InPlayerState)
 {
 	if (HasAuthority())
 	{
+		DECLARE_SCOPE_CYCLE_COUNTER(TEXT("AValorCharacter::Initialize"), STAT_ValorCharacter_Initialize, STATGROUP_ValorCharacter);
+
 		if (GetStatComponent())
 		{
 			StatComponent->Initialize(Cast<AValorPlayerState>(InPlayerState));

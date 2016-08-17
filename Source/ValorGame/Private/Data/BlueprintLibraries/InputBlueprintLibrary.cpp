@@ -4,7 +4,7 @@
 #include "InputBlueprintLibrary.h"
 
 
-void UInputBlueprintLibrary::GetAxisAndActionMappingsForKey(FKey Key, TArray<FValorActionInputBinding>& ActionBindings, TArray<FValorAxisInputBinding>& AxisBindings)
+void UInputBlueprintLibrary::K2_GetAxisAndActionMappingsForKey(FKey Key, TArray<FValorActionInputBinding>& ActionBindings, TArray<FValorAxisInputBinding>& AxisBindings)
 {
 	ActionBindings.Empty();
 	AxisBindings.Empty();
@@ -36,7 +36,7 @@ void UInputBlueprintLibrary::GetAxisAndActionMappingsForKey(FKey Key, TArray<FVa
 	}
 }
 
-FValorAxisInputBinding UInputBlueprintLibrary::GetInputAxis(const FKeyEvent& KeyEvent)
+FValorAxisInputBinding UInputBlueprintLibrary::K2_GetInputAxis(const FKeyEvent& KeyEvent)
 {
 	FValorAxisInputBinding Binding;
 	
@@ -48,7 +48,7 @@ FValorAxisInputBinding UInputBlueprintLibrary::GetInputAxis(const FKeyEvent& Key
 	return Binding;
 }
 
-void UInputBlueprintLibrary::GetAllAxisKeyBindings(TArray<FValorAxisInputBinding>& Bindings)
+void UInputBlueprintLibrary::K2_GetAllAxisKeyBindings(TArray<FValorAxisInputBinding>& Bindings)
 {
 	Bindings.Empty();
 
@@ -65,7 +65,7 @@ void UInputBlueprintLibrary::GetAllAxisKeyBindings(TArray<FValorAxisInputBinding
 	}
 }
 
-void UInputBlueprintLibrary::RemoveAxisKeyBinding(FValorAxisInputBinding BindingToRemove)
+void UInputBlueprintLibrary::K2_RemoveAxisKeyBinding(FValorAxisInputBinding BindingToRemove)
 {
 	UInputSettings* Settings = GetMutableDefault<UInputSettings>();
 	if (!Settings)
@@ -97,7 +97,7 @@ void UInputBlueprintLibrary::RemoveAxisKeyBinding(FValorAxisInputBinding Binding
 	}
 }
 
-bool UInputBlueprintLibrary::RebindAxisKey(FValorAxisInputBinding OriginalBinding, FValorAxisInputBinding NewBinding)
+bool UInputBlueprintLibrary::K2_RebindAxisKey(FValorAxisInputBinding OriginalBinding, FValorAxisInputBinding NewBinding)
 {
 	UInputSettings* Settings = const_cast<UInputSettings*>(GetDefault<UInputSettings>());
 	if (!Settings)
@@ -130,7 +130,7 @@ bool UInputBlueprintLibrary::RebindAxisKey(FValorAxisInputBinding OriginalBindin
 	return bFound;
 }
 
-FValorActionInputBinding UInputBlueprintLibrary::GetInputAction(const FKeyEvent& KeyEvent)
+FValorActionInputBinding UInputBlueprintLibrary::K2_GetInputAction(const FKeyEvent& KeyEvent)
 {
 	FValorActionInputBinding Binding;
 
@@ -145,7 +145,7 @@ FValorActionInputBinding UInputBlueprintLibrary::GetInputAction(const FKeyEvent&
 	return Binding;
 }
 
-void UInputBlueprintLibrary::GetAllActionKeyBindings(TArray<FValorActionInputBinding>& Bindings)
+void UInputBlueprintLibrary::K2_GetAllActionKeyBindings(TArray<FValorActionInputBinding>& Bindings)
 {
 	Bindings.Empty();
 
@@ -162,7 +162,7 @@ void UInputBlueprintLibrary::GetAllActionKeyBindings(TArray<FValorActionInputBin
 	}
 }
 
-void UInputBlueprintLibrary::RemoveActionKeyBinding(FValorActionInputBinding BindingToRemove)
+void UInputBlueprintLibrary::K2_RemoveActionKeyBinding(FValorActionInputBinding BindingToRemove)
 {
 	UInputSettings* Settings = GetMutableDefault<UInputSettings>();
 	if (!Settings)
@@ -194,7 +194,7 @@ void UInputBlueprintLibrary::RemoveActionKeyBinding(FValorActionInputBinding Bin
 	}
 }
 
-bool UInputBlueprintLibrary::RebindActionKey(FValorActionInputBinding OriginalBinding, FValorActionInputBinding NewBinding)
+bool UInputBlueprintLibrary::K2_RebindActionKey(FValorActionInputBinding OriginalBinding, FValorActionInputBinding NewBinding)
 {
 	UInputSettings* Settings = const_cast<UInputSettings*>(GetDefault<UInputSettings>());
 	if (!Settings)

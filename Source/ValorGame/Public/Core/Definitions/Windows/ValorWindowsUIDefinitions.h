@@ -1,4 +1,5 @@
 // Copyright Shirasho Media 2016. All rights reserved.
 
-#include "ValorGame.h"
-#include "ValorBuffComponent.h"
+#pragma once
+
+#define VALOR_UI_CONSOLE_UI 0

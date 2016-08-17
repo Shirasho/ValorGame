@@ -14,6 +14,8 @@ UValorHeroStatComponent::UValorHeroStatComponent(const FObjectInitializer& Objec
 
 void UValorHeroStatComponent::Initialize(const class AValorPlayerState* PlayerState)
 {
+	DECLARE_SCOPE_CYCLE_COUNTER(TEXT("UValorHeroStatComponent::Initialize"), STAT_ValorHeroStatComponent_Initialize, STATGROUP_ValorComponent);
+
 	Super::Initialize();
 
 	Experience = PlayerState->GetPlayerExperience();

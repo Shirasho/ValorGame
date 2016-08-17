@@ -8,8 +8,6 @@
 #include "ValorUnitInterface.h"
 #include "ValorCharacter.generated.h"
 
-DECLARE_STATS_GROUP(TEXT("ValorGame"), STATGROUP_ValorCharacter, STATCAT_Advanced);
-
 UCLASS(Abstract)
 class AValorCharacter : public ACharacter, public IValorUnitInterface, public IValorClickableInterface, public IValorHoverableInterface
 {

@@ -5,7 +5,7 @@
 
 #include "ValorPlayerState.h"
 #include "ValorGameMode.h"
-#include "DataBlueprintLibrary.h"
+#include "TypesBlueprintLibrary.h"
 #include "ValorDataDefinitions.h"
 #include "ValorStatTableRow.h"
 
@@ -32,50 +32,54 @@ void UValorUnitStatComponent::Initialize(const class AValorPlayerState* PlayerSt
 		}
 	}
 
-	Super::Initialize();
-
-	if (StatTable)
 	{
-		const TArray<TArray<FString>>& StatTableData = StatTable->GetTableData();
+		DECLARE_SCOPE_CYCLE_COUNTER(TEXT("UValorUnitStatComponent::Initialize"), STAT_ValorUnitStatComponent_Initialize, STATGROUP_ValorComponent);
 
-		// Base Mana
+		Super::Initialize();
+
+		if (StatTable)
 		{
-			const TArray<FString>* CurrentStatLookupPtr = StatTableData.FindByPredicate([](const TArray<FString>& DataRow) { return DataRow.Num() > 0 && DataRow[0] == VALOR_DATA_ROW_BASE_MANA; });
-			if (CurrentStatLookupPtr)
+			const TArray<TArray<FString>>& StatTableData = StatTable->GetTableData();
+
+			// Base Mana
 			{
-				ensureMsgf(UDataBlueprintLibrary::ParseStringArray_float(*CurrentStatLookupPtr, BaseManaPerLevel, 1), TEXT("Invalid data found in row '%s'."), *VALOR_DATA_ROW_BASE_MANA);
+				const TArray<FString>* CurrentStatLookupPtr = StatTableData.FindByPredicate([](const TArray<FString>& DataRow) { return DataRow.Num() > 0 && DataRow[0] == VALOR_DATA_ROW_BASE_MANA; });
+				if (CurrentStatLookupPtr)
+				{
+					ensureMsgf(UTypesBlueprintLibrary::K2_StringToFloatArray(*CurrentStatLookupPtr, BaseManaPerLevel, 1), TEXT("Invalid data found in row '%s'."), *VALOR_DATA_ROW_BASE_MANA);
+				}
+			}
+			// Base Mana Regen
+			{
+				const TArray<FString>* CurrentStatLookupPtr = StatTableData.FindByPredicate([](const TArray<FString>& DataRow) { return DataRow.Num() > 0 && DataRow[0] == VALOR_DATA_ROW_BASE_MANA_REGEN; });
+				if (CurrentStatLookupPtr)
+				{
+					ensureMsgf(UTypesBlueprintLibrary::K2_StringToFloatArray(*CurrentStatLookupPtr, BaseManaRegenPerLevel, 1), TEXT("Invalid data found in row '%s'."), *VALOR_DATA_ROW_BASE_MANA_REGEN);
+				}
+			}
+			// Base Movement Speed
+			{
+				const TArray<FString>* CurrentStatLookupPtr = StatTableData.FindByPredicate([](const TArray<FString>& DataRow) { return DataRow.Num() > 0 && DataRow[0] == VALOR_DATA_ROW_BASE_MOVEMENT_SPEED; });
+				if (CurrentStatLookupPtr)
+				{
+					ensureMsgf(UTypesBlueprintLibrary::K2_StringToFloatArray(*CurrentStatLookupPtr, BaseManaRegenPerLevel, 1), TEXT("Invalid data found in row '%s'."), *VALOR_DATA_ROW_BASE_MOVEMENT_SPEED);
+				}
 			}
 		}
-		// Base Mana Regen
-		{
-			const TArray<FString>* CurrentStatLookupPtr = StatTableData.FindByPredicate([](const TArray<FString>& DataRow) { return DataRow.Num() > 0 && DataRow[0] == VALOR_DATA_ROW_BASE_MANA_REGEN; });
-			if (CurrentStatLookupPtr)
-			{
-				ensureMsgf(UDataBlueprintLibrary::ParseStringArray_float(*CurrentStatLookupPtr, BaseManaRegenPerLevel, 1), TEXT("Invalid data found in row '%s'."), *VALOR_DATA_ROW_BASE_MANA_REGEN);
-			}
-		}
-		// Base Movement Speed
-		{
-			const TArray<FString>* CurrentStatLookupPtr = StatTableData.FindByPredicate([](const TArray<FString>& DataRow) { return DataRow.Num() > 0 && DataRow[0] == VALOR_DATA_ROW_BASE_MOVEMENT_SPEED; });
-			if (CurrentStatLookupPtr)
-			{
-				ensureMsgf(UDataBlueprintLibrary::ParseStringArray_float(*CurrentStatLookupPtr, BaseManaRegenPerLevel, 1), TEXT("Invalid data found in row '%s'."), *VALOR_DATA_ROW_BASE_MOVEMENT_SPEED);
-			}
-		}
-	}
 
-	Mana = GetMana(EValorStatType::Max);
+		Mana = GetMana(EValorStatType::Max);
 
-	if (ExperienceTable)
-	{
-		const TArray<TArray<FString>>& ExperienceTableData = ExperienceTable->GetTableData();
-
-		// Experience Required Per Level
+		if (ExperienceTable)
 		{
-			const TArray<FString>* CurrentStatLookupPtr = ExperienceTableData.FindByPredicate([](const TArray<FString>& DataRow) { return DataRow.Num() > 0 && DataRow[0] == VALOR_DATA_ROW_EXPERIENCE; });
-			if (CurrentStatLookupPtr)
+			const TArray<TArray<FString>>& ExperienceTableData = ExperienceTable->GetTableData();
+
+			// Experience Required Per Level
 			{
-				ensureMsgf(UDataBlueprintLibrary::ParseStringArray_int32(*CurrentStatLookupPtr, RequiredExperiencePerLevel, 1), TEXT("Invalid data found in row '%s'."), *VALOR_DATA_ROW_EXPERIENCE);
+				const TArray<FString>* CurrentStatLookupPtr = ExperienceTableData.FindByPredicate([](const TArray<FString>& DataRow) { return DataRow.Num() > 0 && DataRow[0] == VALOR_DATA_ROW_EXPERIENCE; });
+				if (CurrentStatLookupPtr)
+				{
+					ensureMsgf(UTypesBlueprintLibrary::K2_StringToInt32Array(*CurrentStatLookupPtr, RequiredExperiencePerLevel, 1), TEXT("Invalid data found in row '%s'."), *VALOR_DATA_ROW_EXPERIENCE);
+				}
 			}
 		}
 	}

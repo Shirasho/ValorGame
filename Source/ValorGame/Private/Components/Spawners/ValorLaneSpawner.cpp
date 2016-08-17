@@ -13,6 +13,8 @@ AValorLaneSpawner::AValorLaneSpawner(const FObjectInitializer& ObjectInitializer
 
 void AValorLaneSpawner::SpawnUnit()
 {
+	DECLARE_SCOPE_CYCLE_COUNTER(TEXT("AValorLaneSpawner::SpawnUnit"), STAT_ValorLaneSpawner_SpawnUnit, STATGROUP_ValorSpawner);
+
 	if (HasAuthority() && SpawnClassOrder.Num() > 0)
 	{
 		if (UnitSpawnListIndex < SpawnClassOrder.Num() && SpawnClassOrder[UnitSpawnListIndex])

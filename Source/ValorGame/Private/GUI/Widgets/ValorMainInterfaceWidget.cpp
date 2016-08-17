@@ -5,6 +5,10 @@
 
 #include "ValorPlayerController.h"
 
+#include "UMG.h"
+#include "UMGStyle.h"
+#include "ValorSelectedUnitWidget.h"
+
 void UValorMainInterfaceWidget::NativeConstruct()
 {
 	Super::NativeConstruct();
@@ -16,6 +20,21 @@ void UValorMainInterfaceWidget::NativeConstruct()
 	}
 }
 
+TSharedRef<SWidget> UValorMainInterfaceWidget::RebuildWidget()
+{
+	DECLARE_SCOPE_CYCLE_COUNTER(TEXT("UValorMainInterfaceWidget::RebuildWidget"), STAT_ValorMainInterfaceWidget_RebuildWidget, STATGROUP_ValorGUI);
+
+	TSharedRef<SWidget> Widget = Super::RebuildWidget();
+	UPanelWidget* RootWidget = Cast<UPanelWidget>(GetRootWidget());
+
+	if (RootWidget && WidgetTree)
+	{
+		SelectedUnitWidget = WidgetTree->ConstructWidget<UValorSelectedUnitWidget>(UValorSelectedUnitWidget::StaticClass(), TEXT("SelectedUnitWidget"));
+		RootWidget->AddChild(SelectedUnitWidget);
+	}
+
+	return Widget;
+}
 
 void UValorMainInterfaceWidget::OnAbilityAction1Pressed()
 {

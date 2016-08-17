@@ -15,8 +15,6 @@
 #include "ValorHeroCharacter.h"
 #include "ValorHeroCharacterProxy.h"
 
-DECLARE_CYCLE_STAT(TEXT("ValorGame ~ DetectMouseOver"), STAT_DetectMouseHover, STATGROUP_ValorPlayerController);
-
 AValorPlayerController::AValorPlayerController(const FObjectInitializer& ObjectInitializer)
     : Super(ObjectInitializer)
 {
@@ -66,6 +64,8 @@ void AValorPlayerController::BeginPlay()
 
 void AValorPlayerController::OnWindowReceivedFocus()
 {
+	DECLARE_SCOPE_CYCLE_COUNTER(TEXT("AValorPlayerController::OnWindowReceivedFocus"), STAT_ValorPlayerController_OnWindowReceivedFocus, STATGROUP_ValorCamera);
+
 	FInputModeGameAndUI Mode;
 	Mode.SetLockMouseToViewport(true);
 	Mode.SetHideCursorDuringCapture(false);
@@ -178,7 +178,7 @@ void AValorPlayerController::ValorInitCharacter()
 		AValorHeroCharacterProxy* ValorHeroCharacterProxy = GetValorHeroCharacterProxy();
 		if (ValorHeroCharacterProxy)
 		{
-			ValorHeroCharacterProxy->ServerCreatePlayer(/*PlayerState*/);
+			ValorHeroCharacterProxy->ServerCreatePlayer();
 			ClientValorInitUserInterface();
 		}
 		else
@@ -190,7 +190,7 @@ void AValorPlayerController::ValorInitCharacter()
 
 void AValorPlayerController::ClientValorInitUserInterface_Implementation()
 {
-	if (IsLocalController())
+	if (GetNetMode() != NM_DedicatedServer)
 	{
 		const AValorHeroCharacter* PlayerCharacter = GetValorHeroCharacter();
 		if (PlayerCharacter && PlayerCharacter->GetValorHeroInitilizationProperties().MainUserInterface)
@@ -228,11 +228,13 @@ void AValorPlayerController::OnPrimaryAction2Pressed()
 		/* There would be more tests here. For prototyping
 		* we are simply going to move a character. */
 
+		DECLARE_SCOPE_CYCLE_COUNTER(TEXT("AValorPlayerController::OnPrimaryAction2Pressed"), STAT_ValorPlayerController_OnPrimaryAction2Pressed, STATGROUP_ValorPlayer);
+
 		// Trace to see what is under the mouse cursor
 		FHitResult HitResult;
 		GetHitResultUnderCursor(ECC_Visibility, false, HitResult);
 
-		if (HitResult.bBlockingHit && GetValorHeroCharacterProxy())
+		if (HitResult.GetActor() && GetValorHeroCharacterProxy())
 		{
 			IValorClickableInterface* ClickableInterface = Cast<IValorClickableInterface>(HitResult.GetActor());
 

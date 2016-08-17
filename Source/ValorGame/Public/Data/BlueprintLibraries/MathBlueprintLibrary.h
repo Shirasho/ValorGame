@@ -12,8 +12,8 @@ class UMathBlueprintLibrary : public UBlueprintFunctionLibrary
 public:
 
     UFUNCTION(BlueprintPure, Category = "Math|Float", DisplayName = "Set Precision (float)")
-    static float SetPrecision_Float(float Value, uint8 DecimalPlaces);
+    static float K2_SetFloatPrecision(float Value, uint8 DecimalPlaces);
 
     // Double is not supported in Blueprints. Leaving this here for code classes to utilize.
-    static double SetPrecision_Double(double Value, uint8 DecimalPlaces);
+    static double K2_SetDoublePrecision(double Value, uint8 DecimalPlaces);
 };

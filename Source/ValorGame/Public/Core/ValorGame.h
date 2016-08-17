@@ -7,10 +7,8 @@
 #include "Online.h"                     // Online subsystem
 #include "Net/UnrealNetwork.h"	        // Replication
 
-#include "SlateBasics.h"                // SWidget classes
-#include "SlateExtras.h"                // SWidget classes extended
-
 #include "ValorTypes.h"		            // Commonly-used types
+#include "ValorStats.h"					// Stats
 
 #include "ParticleDefinitions.h"        // Particle systems
 #include "SoundDefinitions.h"           // Sound systems
